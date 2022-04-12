@@ -1,0 +1,22 @@
+networks:
+  net:
+    external:
+      name: FabricDraw
+services:
+  ca.org1.test.com:
+    command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+    container_name: ca.org1.test.com
+    environment:
+    - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+    - FABRIC_CA_SERVER_CA_NAME=ca-org1
+    - FABRIC_CA_SERVER_TLS_ENABLED=true
+    - FABRIC_CA_SERVER_PORT=10054
+    - FABRIC_CA_SERVER_CSR_HOSTS=localhost, ca.org1.test.com
+    image: hyperledger/fabric-ca:1.4.7
+    networks:
+    - net
+    ports:
+    - 10054:10054
+    volumes:
+    - /root/opt/organizations/fabric-ca/org1:/etc/hyperledger/fabric-ca-server
+version: '2'
