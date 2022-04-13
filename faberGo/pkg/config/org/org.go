@@ -18,16 +18,16 @@ func GenOrg(blockchain string, org string) *Org {
 	}
 }
 
-func (that Org) AddChannel(channel string) {
+func (that *Org) AddChannel(channel string) {
 	*that.Channel = append(*that.Channel, channel)
 }
 
-func (that Org) setCA(ca string) {
+func (that *Org) setCA(ca string) {
 	that.CA = ca
 	that.Node.SetCA(ca)
 }
 
-func (that Org) AddNode(node string, tag string) {
+func (that *Org) AddNode(node string, tag string) {
 	switch tag {
 	case NodeCA:
 		that.setCA(node)
@@ -37,6 +37,7 @@ func (that Org) AddNode(node string, tag string) {
 		break
 	case NodeLeader:
 		that.Node.AddLeader(node)
+		break
 	case NodeAnchor:
 		that.Node.AddAnchor(node)
 		break
@@ -51,10 +52,10 @@ func (that Org) AddNode(node string, tag string) {
 	}
 }
 
-func (that Org) UpdateBlockchain(blockchain string) {
+func (that *Org) UpdateBlockchain(blockchain string) {
 	that.Blockchains = blockchain
 }
 
-func (that Org) JoinChannel(channel string) {
+func (that *Org) JoinChannel(channel string) {
 	*that.Channel = append(*that.Channel, channel)
 }

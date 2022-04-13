@@ -2,9 +2,9 @@
     "groups": [
         {
             "key": "orderer.test.com",
-            "ca": "",
+            "ca": "ca.orderer.test.com",
             "node": {
-                "ca": "",
+                "ca": "ca.orderer.test.com",
                 "orderer": [
                     "orderer0.orderer.test.com",
                     "orderer1.orderer.test.com",
@@ -22,9 +22,9 @@
         },
         {
             "key": "org0.test.com",
-            "ca": "",
+            "ca": "ca.org0.test.com",
             "node": {
-                "ca": "",
+                "ca": "ca.org0.test.com",
                 "orderer": [],
                 "leader_peers": [
                     "peer0.org0.test.com"
@@ -46,9 +46,9 @@
         },
         {
             "key": "org1.test.com",
-            "ca": "",
+            "ca": "ca.org1.test.com",
             "node": {
-                "ca": "",
+                "ca": "ca.org1.test.com",
                 "orderer": [],
                 "leader_peers": [
                     "peer0.org1.test.com"
@@ -70,9 +70,9 @@
         },
         {
             "key": "org2.test.com",
-            "ca": "",
+            "ca": "ca.org2.test.com",
             "node": {
-                "ca": "",
+                "ca": "ca.org2.test.com",
                 "orderer": [],
                 "leader_peers": [
                     "peer0.org2.test.com"

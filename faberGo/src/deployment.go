@@ -24,20 +24,20 @@ func GenerateDeploymentConfigExample(path string) error {
 	generateConfig := config.GenGenerateConfig()
 
 	// Blockchain配置
-	generateConfig.AddBlockchain(blockchain.Blockchain{
+	generateConfig.AddBlockchain(&blockchain.Blockchain{
 		Key:      fabric,
 		Name:     fabricDraw,
 		Channels: &[]string{channel1},
 	})
 
 	// 组织配置
-	generateConfig.AddGroup(*org.GenOrg(fabric, orgOrderer))
-	generateConfig.AddGroup(*org.GenOrg(fabric, org0))
-	generateConfig.AddGroup(*org.GenOrg(fabric, org1))
-	generateConfig.AddGroup(*org.GenOrg(fabric, org2))
+	generateConfig.AddGroup(org.GenOrg(fabric, orgOrderer))
+	generateConfig.AddGroup(org.GenOrg(fabric, org0))
+	generateConfig.AddGroup(org.GenOrg(fabric, org1))
+	generateConfig.AddGroup(org.GenOrg(fabric, org2))
 
 	// 组织节点添加
-	generateConfig.AddNode(nodes.Node{
+	generateConfig.AddNode(&nodes.Node{
 		Key: "ca",
 		Org: orgOrderer,
 		Address: &nodes.ServerConfig{
@@ -48,7 +48,7 @@ func GenerateDeploymentConfigExample(path string) error {
 		Bootstrap: &[]string{},
 		Type:      &[]string{org.NodeCA},
 	})
-	generateConfig.AddNode(nodes.Node{
+	generateConfig.AddNode(&nodes.Node{
 		Key: "orderer0",
 		Org: orgOrderer,
 		Address: &nodes.ServerConfig{
@@ -59,7 +59,7 @@ func GenerateDeploymentConfigExample(path string) error {
 		Bootstrap: &[]string{},
 		Type:      &[]string{org.NodeOrderer},
 	})
-	generateConfig.AddNode(nodes.Node{
+	generateConfig.AddNode(&nodes.Node{
 		Key: "orderer1",
 		Org: orgOrderer,
 		Address: &nodes.ServerConfig{
@@ -70,7 +70,7 @@ func GenerateDeploymentConfigExample(path string) error {
 		Bootstrap: &[]string{},
 		Type:      &[]string{org.NodeOrderer},
 	})
-	generateConfig.AddNode(nodes.Node{
+	generateConfig.AddNode(&nodes.Node{
 		Key: "orderer2",
 		Org: orgOrderer,
 		Address: &nodes.ServerConfig{
@@ -82,7 +82,7 @@ func GenerateDeploymentConfigExample(path string) error {
 		Type:      &[]string{org.NodeOrderer},
 	})
 
-	generateConfig.AddNode(nodes.Node{
+	generateConfig.AddNode(&nodes.Node{
 		Key: "ca",
 		Org: org0,
 		Address: &nodes.ServerConfig{
@@ -93,7 +93,7 @@ func GenerateDeploymentConfigExample(path string) error {
 		Bootstrap: &[]string{},
 		Type:      &[]string{org.NodeCA},
 	})
-	generateConfig.AddNode(nodes.Node{
+	generateConfig.AddNode(&nodes.Node{
 		Key: "peer0",
 		Org: org0,
 		Address: &nodes.ServerConfig{
@@ -105,7 +105,7 @@ func GenerateDeploymentConfigExample(path string) error {
 		Type:      &[]string{org.NodeLeader, org.NodeAnchor, org.NodeCommit, org.NodeEndorse},
 	})
 
-	generateConfig.AddNode(nodes.Node{
+	generateConfig.AddNode(&nodes.Node{
 		Key: "ca",
 		Org: org1,
 		Address: &nodes.ServerConfig{
@@ -116,7 +116,7 @@ func GenerateDeploymentConfigExample(path string) error {
 		Bootstrap: &[]string{},
 		Type:      &[]string{org.NodeCA},
 	})
-	generateConfig.AddNode(nodes.Node{
+	generateConfig.AddNode(&nodes.Node{
 		Key: "peer0",
 		Org: org1,
 		Address: &nodes.ServerConfig{
@@ -128,7 +128,7 @@ func GenerateDeploymentConfigExample(path string) error {
 		Type:      &[]string{org.NodeLeader, org.NodeAnchor, org.NodeCommit, org.NodeEndorse},
 	})
 
-	generateConfig.AddNode(nodes.Node{
+	generateConfig.AddNode(&nodes.Node{
 		Key: "ca",
 		Org: org2,
 		Address: &nodes.ServerConfig{
@@ -139,7 +139,7 @@ func GenerateDeploymentConfigExample(path string) error {
 		Bootstrap: &[]string{},
 		Type:      &[]string{org.NodeCA},
 	})
-	generateConfig.AddNode(nodes.Node{
+	generateConfig.AddNode(&nodes.Node{
 		Key: "peer0",
 		Org: org2,
 		Address: &nodes.ServerConfig{
@@ -169,7 +169,7 @@ func GenerateDeploymentConfigExample(path string) error {
 		return err
 	}
 	orgPointer.JoinChannel(channel1)
-	
+
 	orgPointer, err = generateConfig.GetGroupByKey(org2)
 	if nil != err {
 		return err

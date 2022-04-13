@@ -20,26 +20,26 @@ func GenNodes() *Node {
 	}
 }
 
-func (that Node) SetCA(ca string) {
+func (that *Node) SetCA(ca string) {
 	that.CA = ca
 }
 
-func (that Node) AddOrderer(orderer string) {
+func (that *Node) AddOrderer(orderer string) {
 	*that.Orderer = append(*that.Orderer, orderer)
 }
 
-func (that Node) AddLeader(leader string) {
+func (that *Node) AddLeader(leader string) {
 	*that.LeaderPeers = append(*that.LeaderPeers, leader)
 }
 
-func (that Node) AddAnchor(anchor string) {
+func (that *Node) AddAnchor(anchor string) {
 	*that.AnchorPeers = append(*that.AnchorPeers, anchor)
 }
 
-func (that Node) AddCommit(commit string) {
+func (that *Node) AddCommit(commit string) {
 	*that.CommittingPeers = append(*that.CommittingPeers, commit)
 }
 
-func (that Node) AddEndorse(endorse string) {
+func (that *Node) AddEndorse(endorse string) {
 	*that.EndorsingPeers = append(*that.EndorsingPeers, endorse)
 }
