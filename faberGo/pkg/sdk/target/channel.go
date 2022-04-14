@@ -1,4 +1,4 @@
-package sdk
+package target
 
 type ChannelConfig struct {
 	Orderers []OrdererConfig `json:"orderers"`

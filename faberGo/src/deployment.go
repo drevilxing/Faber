@@ -182,7 +182,7 @@ func GenerateDeploymentConfigExample(path string) error {
 		return err
 	}
 	//fmt.Println(string(data))
-	file, err := os.OpenFile(path, os.O_RDWR, os.ModeAppend)
+	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0766)
 	defer func(file *os.File) {
 		_ = file.Close()
 	}(file)

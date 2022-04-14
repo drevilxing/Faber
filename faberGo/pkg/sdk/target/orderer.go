@@ -1,4 +1,4 @@
-package sdk
+package target
 
 type OrdererConfig struct {
 }
