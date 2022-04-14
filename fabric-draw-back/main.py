@@ -3,46 +3,9 @@ import time
 import io
 import os
 import stat
+import json
+
 from yaml_generator import CAYamlGenerator, OrderYamlGenerator, PeerYamlGenerator, ConfigTXYamlGenerator
-
-
-# 递归get
-def sftp_get_r(sftp_client, remote_path, local_path):
-    try:
-        sftp_client.stat(remote_path)
-    except IOError:
-        return
-    if not os.path.exists(local_path):
-        os.mkdir(local_path)
-    for item in sftp_client.listdir(remote_path):
-        if stat.S_ISDIR(sftp_client.stat(f'{remote_path}/{item}').st_mode):
-            sftp_get_r(sftp_client, f'{remote_path}/{item}', os.path.join(local_path, item))
-        else:
-            sftp_client.get(f'{remote_path}/{item}', os.path.join(local_path, item))
-
-
-# 递归put
-def sftp_put_r(sftp_client, local_path, remote_path):
-    if not os.path.exists(local_path):
-        return
-    path = ""
-    for dir in remote_path.split("/"):
-        if dir == "":
-            continue
-        path += f"/{dir}"
-        try:
-            sftp_client.listdir(path)
-        except IOError:
-            sftp_client.mkdir(path)
-    try:
-        sftp_client.stat(remote_path)
-    except IOError:
-        sftp_client.mkdir(remote_path)
-    for item in os.listdir(local_path):
-        if os.path.isfile(os.path.join(local_path, item)):
-            sftp_client.put(os.path.join(local_path, item), f'{remote_path}/{item}')
-        else:
-            sftp_put_r(sftp_client, os.path.join(local_path, item), f'{remote_path}/{item}')
 
 
 def generate_ca(ca_id, ca_information, fabric_name, target_host, crypto_base):
@@ -50,198 +13,24 @@ def generate_ca(ca_id, ca_information, fabric_name, target_host, crypto_base):
     node_name, group_name, domain = ca_id.split('.', 2)
     # 读取ca地址
     address = ca_information['address']
-    # 获取私钥地址
-    key_file = io.StringIO(address['sk'])
-    # 获取私钥
-    private_key = paramiko.RSAKey.from_private_key(key_file)
-    # 创建ssh对象
-    ssh = paramiko.SSHClient()
-    # 连接主机（服务器）
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(hostname=address['host'], port=address['ssh_port'], username='root', password='fd6449387')
-    # 在服务器主机上执行linux命令
-    stdin, stdout, stderr = ssh.exec_command(f'if [ ! -d {crypto_base} ]; then mkdir -p {crypto_base}; fi')
-    stdout.channel.recv_exit_status()
-    # 将node_build.py传输到远程服务器主机上
-    ftp_client = ssh.open_sftp()
-    file_name = 'node_build.py'
-    ftp_client.put(file_name, f'{crypto_base}/{file_name}')
-
-    # 对于orderer节点
-    if group_name == 'orderer':
-        # 执行linux命令
-        stdin, stdout, stderr = ssh.exec_command(
-            f'python3 {crypto_base}/node_build.py --func_name init_docker_swarm {target_host} {fabric_name} {crypto_base}')
-        stdout.channel.recv_exit_status()
-        # 将token文件从远程主机下载到windows本地
-        # ftp_client.get(f'{crypto_base}/token', 'token')
-    # 对于其他节点
-    else:
-        try:
-            # 查看文件状态
-            ftp_client.stat(f'{crypto_base}/token')
-        # 若无token文件
-        except IOError:
-            node_host = address['host']
-            # 上传token文件
-            ftp_client.put('token', f'{crypto_base}/token')
-            # 执行node_build.py
-            stdin, stdout, stderr = ssh.exec_command(
-                f'python3 {crypto_base}/node_build.py --func_name join_docker_swarm {node_host} {target_host} {crypto_base}')
-            stdout.channel.recv_exit_status()
-
-    # 创建对象
     ca_yaml_generator = CAYamlGenerator()
     # 生成文件
-    file_name = ca_yaml_generator.generate(ca_id, group_name, fabric_name, address['fabric_port'], crypto_base)
-    # 将生成的文件上传到服务器
-    ftp_client.put(file_name, f'{crypto_base}/{file_name}')
-    # 启动docker容器，获取证书
-    stdin, stdout, stderr = ssh.exec_command(f'docker-compose -f {crypto_base}/{file_name} up -d')
-    stdout.channel.recv_exit_status()
-    time.sleep(3)
-    tls_cert_path = f'organizations/fabric-ca/{group_name}'
-    if not os.path.exists(tls_cert_path):
-        os.makedirs(tls_cert_path)
-    # 获取pem文件
-    ftp_client.get(f'{crypto_base}/{tls_cert_path}/tls-cert.pem', f'{tls_cert_path}/tls-cert.pem')
-    ftp_client.close()
-    ssh.close()
-
-
-def generate_order_msp(order_id, order_information, ca_port, crypto_base):
-    node_name, group_name, domain = order_id.split('.', 2)
-    address = order_information['address']
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    key_file = io.StringIO(address['sk'])
-    private_key = paramiko.RSAKey.from_private_key(key_file)
-    ssh.connect(hostname=address['host'], port=address['ssh_port'], username='root', password='fd6449387')
-    tls_cert_path = f'organizations/fabric-ca/{group_name}'
-    stdin, stdout, stderr = ssh.exec_command(
-        f'if [ ! -d {crypto_base}/{tls_cert_path} ]; then mkdir -p {crypto_base}/{tls_cert_path}; fi')
-    stdout.channel.recv_exit_status()
-    ftp_client = ssh.open_sftp()
-    ftp_client.put(f'{tls_cert_path}/tls-cert.pem', f'{crypto_base}/{tls_cert_path}/tls-cert.pem')
-    file_name = 'node_build.py'
-    ftp_client.put(file_name, f'{crypto_base}/{file_name}')
-    stdin, stdout, stderr = ssh.exec_command(
-        f'python3 {crypto_base}/node_build.py --func_name org_msp_generate {group_name} {domain} {ca_port} {crypto_base}')
-    stdout.channel.recv_exit_status()
-    # print(stdout.readlines(), stderr.readlines())
-    stdin, stdout, stderr = ssh.exec_command(
-        f'python3 {crypto_base}/node_build.py --func_name peer_msp_generate {node_name} {group_name} {domain} {ca_port} {crypto_base}')
-    stdout.channel.recv_exit_status()
-    # print(stdout.readlines(), stderr.readlines())
-    tls_ca_path = f'organizations/{group_name}.{domain}/tlsca'
-    if not os.path.exists(tls_ca_path):
-        os.makedirs(tls_ca_path)
-    ftp_client.get(f'{crypto_base}/{tls_ca_path}/tlsca.{group_name}.{domain}-cert.pem',
-                   f'{tls_ca_path}/tlsca.{group_name}.{domain}-cert.pem')
-    server_path = f'organizations/{group_name}.{domain}/peers/{order_id}/tls'
-    if not os.path.exists(server_path):
-        os.makedirs(server_path)
-    # print(f'{crypto_base}/{server_path}/server.crt')
-    ftp_client.get(f'{crypto_base}/{server_path}/server.crt', f'{server_path}/server.crt')
-    ftp_client.close()
+    ca_yaml_generator.generate(ca_id, group_name, fabric_name, address['fabric_port'], crypto_base)
 
 
 def generate_peer(peer_id, peer_information, order_group_id, fabric_name, target_host, ca_port, crypto_base):
-    node_name, group_name, domain = peer_id.split('.', 2)
     address = peer_information['address']
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    key_file = io.StringIO(address['sk'])
-    private_key = paramiko.RSAKey.from_private_key(key_file)
-    ssh.connect(hostname=address['host'], port=address['ssh_port'], username='root', password='fd6449387')
-    tls_cert_path = f'organizations/fabric-ca/{group_name}'
-    stdin, stdout, stderr = ssh.exec_command(
-        f'if [ ! -d {crypto_base}/{tls_cert_path} ]; then mkdir -p {crypto_base}/{tls_cert_path}; fi')
-    stdout.channel.recv_exit_status()
-    ftp_client = ssh.open_sftp()
-    ftp_client.put(f'{tls_cert_path}/tls-cert.pem', f'{crypto_base}/{tls_cert_path}/tls-cert.pem')
-    tls_ca_path = f'organizations/{order_group_id}/tlsca'
-    stdin, stdout, stderr = ssh.exec_command(
-        f'if [ ! -d {crypto_base}/{tls_ca_path} ]; then mkdir -p {crypto_base}/{tls_ca_path}; fi')
-    stdout.channel.recv_exit_status()
-    ftp_client.put(f'{tls_ca_path}/tlsca.{order_group_id}-cert.pem',
-                   f'{crypto_base}/{tls_ca_path}/tlsca.{order_group_id}-cert.pem')
-    file_name = 'node_build.py'
-    ftp_client.put(file_name, f'{crypto_base}/{file_name}')
-    try:
-        ftp_client.stat(f'{crypto_base}/token')
-    except IOError:
-        node_host = address['host']
-        ftp_client.put('token', f'{crypto_base}/token')
-        stdin, stdout, stderr = ssh.exec_command(
-            f'python3 {crypto_base}/node_build.py --func_name join_docker_swarm {node_host} {target_host} {crypto_base}')
-        stdout.channel.recv_exit_status()
-
     peer_yaml_generator = PeerYamlGenerator()
-    file_name = peer_yaml_generator.generate(peer_id, fabric_name, address['fabric_port'], crypto_base)
-
-    ftp_client.put(file_name, f'{crypto_base}/{file_name}')
-    stdin, stdout, stderr = ssh.exec_command(
-        f'python3 {crypto_base}/node_build.py --func_name org_msp_generate {group_name} {domain} {ca_port} {crypto_base}')
-    stdout.channel.recv_exit_status()
-    # print(stderr.readlines())
-    stdin, stdout, stderr = ssh.exec_command(
-        f'python3 {crypto_base}/node_build.py --func_name peer_msp_generate {node_name} {group_name} {domain} {ca_port} {crypto_base}')
-    stdout.channel.recv_exit_status()
-    # print(stderr.readlines())
-    stdin, stdout, stderr = ssh.exec_command(f'docker-compose -f {crypto_base}/{file_name} up -d')
-    stdout.channel.recv_exit_status()
-    # print(stderr.readlines())
-    time.sleep(3)
-    peer_path = f'organizations/{group_name}.{domain}'
-    if not os.path.exists(peer_path):
-        os.makedirs(peer_path)
-    sftp_get_r(ftp_client, f'{crypto_base}/{peer_path}', peer_path)
-    ftp_client.close()
+    peer_yaml_generator.generate(peer_id, fabric_name, address['fabric_port'], crypto_base)
 
 
 def generate_order(order_id, order_information, fabric_name, channel_id, peer_group_ids, configtx_filename: str,
                    crypto_base='/root/opt'):
     node_name, group_name, domain = order_id.split('.', 2)
     address = order_information['address']
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    key_file = io.StringIO(address['sk'])
-    private_key = paramiko.RSAKey.from_private_key(key_file)
-    ssh.connect(hostname=address['host'], port=address['ssh_port'], username='root', password='fd6449387')
-    ssh.exec_command(f'if [ ! -d {crypto_base}/channel-artifacts ]; then mkdir -p {crypto_base}/channel-artifacts; fi')
-    ftp_client = ssh.open_sftp()
-    sftp_put_r(ftp_client, f"organizations/{group_name}.{domain}/peers",
-               f"{crypto_base}/organizations/{group_name}.{domain}/peers")
-    for peer in peer_group_ids:
-        sftp_put_r(ftp_client, f"organizations/{peer}/msp/cacerts", f"{crypto_base}/organizations/{peer}/msp/cacerts")
-        ftp_client.put(f"organizations/{peer}/msp/config.yaml", f"{crypto_base}/organizations/{peer}/msp/config.yaml")
-
     orderer_yaml_generator = OrderYamlGenerator()
-    filename = orderer_yaml_generator.generate(order_id, group_name, node_name, fabric_name, address["fabric_port"],
-                                               crypto_base)
-
-    ftp_client.put(filename, f"{crypto_base}/{filename}")
-    ftp_client.put(configtx_filename, f'{crypto_base}/{configtx_filename}')
-    while True:
-        try:
-            ftp_client.stat(f'{crypto_base}/{configtx_filename}')
-            ftp_client.stat(f'{crypto_base}/{filename}')
-            print("File exists.")
-            break
-        except IOError:
-            print("File not exists.")
-            time.sleep(2)
-    ftp_client.close()
-    stdin, stdout, stderr = ssh.exec_command(
-        f'python3 {crypto_base}/node_build.py --func_name init_channel_artifacts {fabric_name} {channel_id} "{crypto_base}" {peer_group_ids} ')
-    stdout.channel.recv_exit_status()
-    # print(stderr.readlines())
-    stdin, stdout, stderr = ssh.exec_command(f'docker-compose -f {crypto_base}/{filename} up -d')
-    stdout.channel.recv_exit_status()
-    # print(stderr.readlines())
-    time.sleep(4)
-    ssh.close()
+    orderer_yaml_generator.generate(order_id, group_name, node_name, fabric_name, address["fabric_port"],
+                                    crypto_base)
 
 
 def generate_configtx(groups: dict, nodes: dict, orderers: dict, net_name: str, crypto_base: str):
@@ -262,70 +51,79 @@ def parse_json(network_topology_json):
     target_host = ''
     peer_group_ids = []
 
-    # 读取groupid和group信息
-    for group_id, group_information in network_topology_json['groups'].items():
+    # 读取group信息
+    for group in network_topology_json['groups']:
         # orderer节点
-        if group_id.split('.', 1)[0] == 'orderer':
+        if group['key'].split('.', 1)[0] == 'orderer':
             # 获取orderer节点groupid
-            order_group_id = group_id
+            order_group_id = group['key']
             # 填入ca端口号
-            order_ca_port = network_topology_json['nodes'][group_information['nodes']['ca']]['address']['fabric_port']
+            for node in network_topology_json['nodes']:
+                if node['key'] == group['nodes']['ca']:
+                    order_ca_port = node['address']['fabric_port']
             # 填入ca的ip地址
-            target_host = \
-                network_topology_json['nodes'][network_topology_json['groups'][group_id]['nodes']['ca']]['address'][
-                    'host']
+            for node in network_topology_json['nodes']:
+                if node['key'] == group['nodes']['ca']:
+                    target_host = node['address']['host']
         else:
             # 添加peer节点
-            peer_group_ids.append(group_id)
+            peer_group_ids.append(group['key'])
         # 生成ca证书
-        generate_ca(group_information['nodes']['ca'], network_topology_json['nodes'][group_information['nodes']['ca']],
-                    network_topology_json['blockchains']['fabric-1']['name'], target_host, '/root/opt')
-
+        for node in network_topology_json['nodes']:
+            if node['key'] == group['nodes']['ca']:
+                generate_ca(group['nodes']['ca'], node,
+                    network_topology_json['blockchains'][0]['name'], target_host, '/root/opt')
     print("成功生成ca证书")
-    # 对每个orderer节点
-    for order_id in network_topology_json['groups'][order_group_id]['nodes']['orderer']:
-        # 生成orderer节点msp证书
-        generate_order_msp(order_id, network_topology_json['nodes'][order_id], order_ca_port, '/root/opt')
 
-    print("成功生成msp")
     # 对每个peer节点
     for org_id in peer_group_ids:
         # 获取peer结点的信息
-        peer_ca_port = \
-            network_topology_json['nodes'][network_topology_json['groups'][org_id]['nodes']['ca']]['address'][
-                'fabric_port']
-        leader_peers_ids = network_topology_json['groups'][org_id]['nodes']['leader_peers']
-        anchor_peers_ids = network_topology_json['groups'][org_id]['nodes']['anchor_peers']
-        committing_peers_ids = network_topology_json['groups'][org_id]['nodes']['committing_peers']
-        endorsing_peers_ids = network_topology_json['groups'][org_id]['nodes']['endorsing_peers']
+        for node in network_topology_json['nodes']:
+            for group in network_topology_json['groups']:
+                if group['key'] == org_id:
+                    if node['key'] == group['nodes']['ca']:
+                        peer_ca_port = node['address']['fabric_port']
+
+        for group in network_topology_json['groups']:
+            if group['key'] == org_id:
+                leader_peers_ids = group['nodes']['leader_peers']
+                anchor_peers_ids = group['nodes']['anchor_peers']
+                committing_peers_ids = group['nodes']['committing_peers']
+                endorsing_peers_ids = group['nodes']['endorsing_peers']
 
         peer_ids = list(set(leader_peers_ids).union(
             set(anchor_peers_ids).union(set(committing_peers_ids)).union(set(endorsing_peers_ids))))
         # 生成peer节点
         for peer_id in peer_ids:
-            generate_peer(peer_id, network_topology_json['nodes'][peer_id], order_group_id,
-                          network_topology_json['blockchains']['fabric-1']['name'], target_host, peer_ca_port,
-                          '/root/opt')
+            for node in network_topology_json['nodes']:
+                if peer_id == node['key']:
+                    generate_peer(peer_id, node, order_group_id,
+                                  network_topology_json['blockchains'][0]['name'], target_host, peer_ca_port,
+                                  '/root/opt')
     orderers = dict()
     print("成功生成peer")
-    for node in network_topology_json["nodes"]:
-        if "orderer" in network_topology_json["nodes"][node]["type"]:
-            orderers[node] = network_topology_json["nodes"][node]
 
+    for node in network_topology_json["nodes"]:
+        if "orderer" in node["type"]:
+            orderers[node['key']] = node
     # 生成configtx文件
     configtx_filename = generate_configtx(network_topology_json["groups"], network_topology_json["nodes"], orderers,
-                                          network_topology_json["blockchains"]["fabric-1"]["name"], "/root/opt")
-
+                                          network_topology_json["blockchains"][0]["name"], "/root/opt")
     print("成功生成configtx")
 
-    for order_id in network_topology_json['groups'][order_group_id]['nodes']['orderer']:
-        # 生成orderer节点
-        generate_order(order_id, network_topology_json['nodes'][order_id],
-                       network_topology_json['blockchains']['fabric-1']['name'],
-                       network_topology_json['blockchains']['fabric-1']['channels'][0], peer_group_ids,
-                       configtx_filename)
 
+    for group in network_topology_json['groups']:
+        if group['key'] == order_group_id:
+            for order_id in group['nodes']['orderer']:
+                for node in network_topology_json['nodes']:
+                    if node['key'] == order_id:
+                        generate_order(order_id, node,
+                                       network_topology_json['blockchains'][0]['name'],
+                                       network_topology_json['blockchains'][0]['channels'][0], peer_group_ids,
+                                       configtx_filename)
     print("成功生成order")
+
+
 
 if __name__ == '__main__':
     network_json = {
@@ -373,45 +171,45 @@ if __name__ == '__main__':
         },
         "nodes": {
             "ca.orderer.test.com": {
-                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "7054", "sk": ""},
+                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "7054", },
                 "type": ["ca"]
             },
             "orderer0.orderer.test.com": {
-                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "7050", "sk": ""},
+                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "7050", },
                 "type": ["orderer"]
             },
             "orderer1.orderer.test.com": {
-                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "8050", "sk": ""},
+                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "8050", },
                 "type": ["orderer"]
             },
             "orderer2.orderer.test.com": {
-                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "9050", "sk": ""},
+                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "9050"},
                 "type": ["orderer"]
             },
             "ca.org0.test.com": {
-                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "9054", "sk": ""},
+                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "9054"},
                 "type": ["ca"]
             },
             "peer0.org0.test.com": {
-                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "8051", "sk": ""},
+                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "8051"},
                 "bootstrap": ["127.0.0.1:7051"],
                 "type": ["leader_peer", "anchor_peer", "committing_peer", "endorsing_peers"]
             },
             "ca.org1.test.com": {
-                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "10054", "sk": ""},
+                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "10054"},
                 "type": ["ca"]
             },
             "peer0.org1.test.com": {
-                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "11051", "sk": ""},
+                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "11051"},
                 "bootstrap": ["127.0.0.1:7051"],
                 "type": ["leader_peer", "anchor_peer", "committing_peer", "endorsing_peers"]
             },
             "ca.org2.test.com": {
-                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "12054", "sk": ""},
+                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "12054"},
                 "type": ["ca"]
             },
             "peer0.org2.test.com": {
-                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "13051", "sk": ""},
+                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "13051"},
                 "bootstrap": ["127.0.0.1:7051"],
                 "type": ["leader_peer", "anchor_peer", "committing_peer", "endorsing_peers"]
             },
@@ -423,14 +221,8 @@ if __name__ == '__main__':
             }
         }
     }
-    # # 读取密钥文件
-    with open('id_rsa', 'r') as file:
-        sk = file.read()
-    #
-    # # 填入sk
-    for node_id in network_json['nodes'].keys():
-        network_json['nodes'][node_id]['address']['sk'] = sk
-
-    # 分析json文件
+    json_file = 'config.json'
+    with open(json_file) as js:
+        network_json = json.load(js)
     parse_json(network_json)
     print('ok')

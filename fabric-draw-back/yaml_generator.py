@@ -20,28 +20,31 @@ class ConfigTXYamlGenerator:
         self.configtx = None
         self.filename = ""
 
-    def update_organizations(self, groups: dict, nodes: dict):
+    def update_organizations(self, groups, nodes):
         Organizations = []
-        for key in groups:
-            elems = key.split(".")
+        for group in groups:
+            elems = group['key'].split(".")
             name = elems[0].capitalize()
             Organization = {
                 "Name": name,
                 "SkipAsForeign": False,
                 "ID": name + "MSP",
-                "MSPDir": self.crypto_base + "/organizations/" + key + "/msp"
+                "MSPDir": self.crypto_base + "/organizations/" + group['key'] + "/msp"
             }
-            if "order" in key:
+            if "order" in group['key']:
                 Organization["Policies"] = self.configtx["Organizations"][0]["Policies"]
-                Organization["OrdererEndpoints"] = groups[key]["nodes"]["orderer"]
+                Organization["OrdererEndpoints"] = group["nodes"]["orderer"]
             else:
                 Organization["Policies"] = self.configtx["Organizations"][1]["Policies"]
                 Organization["AnchorPeers"] = []
-                for url in groups[key]["nodes"]["anchor_peers"]:
-                    Organization["AnchorPeers"].append({
-                        "Host": url,
-                        "Port": int(nodes[url]["address"]["fabric_port"])
-                    })
+
+                for url in group["nodes"]["anchor_peers"]:
+                    for node in nodes:
+                        if node['key'] == url:
+                            Organization["AnchorPeers"].append({
+                                "Host": url,
+                                "Port": int(node["address"]["fabric_port"])
+                            })
             for Policie in Organization["Policies"]:
                 Rule = Organization["Policies"][Policie]["Rule"]
                 Organization["Policies"][Policie]["Rule"] = re.sub("Or\S+MSP", name, Rule)
@@ -100,7 +103,7 @@ class ConfigTXYamlGenerator:
             self.yml.dump(self.configtx, file)
         return self
 
-    def generate(self, groups: dict, nodes: dict, orderers: dict):
+    def generate(self, groups, nodes, orderers):
         if not self.configtx:
             return None
         self.update_organizations(groups, nodes)
