@@ -1,8 +1,3 @@
-import paramiko
-import time
-import io
-import os
-import stat
 import json
 
 from yaml_generator import CAYamlGenerator, OrderYamlGenerator, PeerYamlGenerator, ConfigTXYamlGenerator
@@ -72,7 +67,7 @@ def parse_json(network_topology_json):
         for node in network_topology_json['nodes']:
             if node['key'] == group['nodes']['ca']:
                 generate_ca(group['nodes']['ca'], node,
-                    network_topology_json['blockchains'][0]['name'], target_host, '/root/opt')
+                            network_topology_json['blockchains'][0]['name'], target_host, '/root/opt')
     print("成功生成ca证书")
 
     # 对每个peer节点
@@ -111,7 +106,6 @@ def parse_json(network_topology_json):
                                           network_topology_json["blockchains"][0]["name"], "/root/opt")
     print("成功生成configtx")
 
-
     for group in network_topology_json['groups']:
         if group['key'] == order_group_id:
             for order_id in group['nodes']['orderer']:
@@ -124,103 +118,7 @@ def parse_json(network_topology_json):
     print("成功生成order")
 
 
-
 if __name__ == '__main__':
-    network_json = {
-        "groups": {
-            "orderer.test.com": {
-                "nodes": {
-                    "ca": "ca.orderer.test.com",
-                    "orderer": ["orderer0.orderer.test.com", "orderer1.orderer.test.com", "orderer2.orderer.test.com"]
-                },
-                "blockchains": "fabric-1"
-            },
-            "org0.test.com": {
-                "nodes": {
-                    "ca": "ca.org0.test.com",
-                    "leader_peers": ["peer0.org0.test.com"],
-                    "anchor_peers": ["peer0.org0.test.com"],
-                    "committing_peers": ["peer0.org0.test.com"],
-                    "endorsing_peers": ["peer0.org0.test.com"]
-                },
-                "blockchains": "fabric-1",
-                "channel": ["channel-1"]
-            },
-            "org1.test.com": {
-                "nodes": {
-                    "ca": "ca.org1.test.com",
-                    "leader_peers": ["peer0.org1.test.com"],
-                    "anchor_peers": ["peer0.org1.test.com"],
-                    "committing_peers": ["peer0.org1.test.com"],
-                    "endorsing_peers": ["peer0.org1.test.com"]
-                },
-                "blockchains": "fabric-1",
-                "channel": ["channel-1"]
-            },
-            "org2.test.com": {
-                "nodes": {
-                    "ca": "ca.org2.test.com",
-                    "leader_peers": ["peer0.org2.test.com"],
-                    "anchor_peers": ["peer0.org2.test.com"],
-                    "committing_peers": ["peer0.org2.test.com"],
-                    "endorsing_peers": ["peer0.org2.test.com"]
-                },
-                "blockchains": "fabric-1",
-                "channel": ["channel-1"]
-            }
-        },
-        "nodes": {
-            "ca.orderer.test.com": {
-                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "7054", },
-                "type": ["ca"]
-            },
-            "orderer0.orderer.test.com": {
-                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "7050", },
-                "type": ["orderer"]
-            },
-            "orderer1.orderer.test.com": {
-                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "8050", },
-                "type": ["orderer"]
-            },
-            "orderer2.orderer.test.com": {
-                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "9050"},
-                "type": ["orderer"]
-            },
-            "ca.org0.test.com": {
-                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "9054"},
-                "type": ["ca"]
-            },
-            "peer0.org0.test.com": {
-                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "8051"},
-                "bootstrap": ["127.0.0.1:7051"],
-                "type": ["leader_peer", "anchor_peer", "committing_peer", "endorsing_peers"]
-            },
-            "ca.org1.test.com": {
-                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "10054"},
-                "type": ["ca"]
-            },
-            "peer0.org1.test.com": {
-                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "11051"},
-                "bootstrap": ["127.0.0.1:7051"],
-                "type": ["leader_peer", "anchor_peer", "committing_peer", "endorsing_peers"]
-            },
-            "ca.org2.test.com": {
-                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "12054"},
-                "type": ["ca"]
-            },
-            "peer0.org2.test.com": {
-                "address": {"host": "172.20.10.3", "ssh_port": "22", "fabric_port": "13051"},
-                "bootstrap": ["127.0.0.1:7051"],
-                "type": ["leader_peer", "anchor_peer", "committing_peer", "endorsing_peers"]
-            },
-        },
-        "blockchains": {
-            "fabric-1": {
-                "name": "FabricDraw",
-                "channels": ["channel-1"]
-            }
-        }
-    }
     json_file = 'config.json'
     with open(json_file) as js:
         network_json = json.load(js)
