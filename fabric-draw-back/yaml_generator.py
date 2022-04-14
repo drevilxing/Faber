@@ -1,5 +1,6 @@
 import yaml
 import re
+import os
 from ruamel.yaml import YAML
 
 
@@ -129,7 +130,12 @@ class CAYamlGenerator(YamlGenerator):
         ca_information['container_name'] = node_id
         del docker_yaml['services']['ca.org1.test.com']
         docker_yaml['services'][node_id] = ca_information
-        file_name = f'docker-compose-ca-{org_name}.yaml'
+
+        folder = os.path.exists(f'{fabric_name}_config_lists')
+        if not folder:
+            os.makedirs(f'{fabric_name}_config_lists')
+
+        file_name = f'{fabric_name}_config_lists/docker-compose-ca-{org_name}.yaml'
         with open(file_name, 'w', encoding="utf-8") as file:
             yaml.dump(docker_yaml, file, Dumper=yaml.Dumper)
         return file_name
@@ -155,7 +161,7 @@ class OrderYamlGenerator(YamlGenerator):
         order_information['ports'][0] = f'{fabric_port}:{fabric_port}'
         del docker_yaml['services']['orderer0.orderer.test.com']
         docker_yaml['services'][node_id] = order_information
-        file_name = f'docker-compose-{org_name}-{node_name}.yaml'
+        file_name = f'{fabric_name}_config_lists/docker-compose-{org_name}-{node_name}.yaml'
         with open(file_name, 'w', encoding="utf-8") as file:
             yaml.dump(docker_yaml, file, Dumper=yaml.Dumper)
         with open(file_name, 'a') as file:
@@ -187,7 +193,7 @@ class PeerYamlGenerator(YamlGenerator):
         peer_information['ports'][0] = f'{fabric_port}:{fabric_port}'
         del docker_yaml['services']['peer0.org1.test.com']
         docker_yaml['services'][node_id] = peer_information
-        file_name = f'docker-compose-{org_name}-{node_name}.yaml'
+        file_name = f'{fabric_name}_config_lists/docker-compose-{org_name}-{node_name}.yaml'
         with open(file_name, 'w', encoding="utf-8") as file:
             yaml.dump(docker_yaml, file, Dumper=yaml.Dumper)
         with open(file_name, 'a') as file:
