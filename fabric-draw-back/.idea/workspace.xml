@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="abf80583-420a-4e39-ae09-4b64089e9fd2" name="Default Changelist" comment="" />
+    <list default="true" id="abf80583-420a-4e39-ae09-4b64089e9fd2" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/configtx.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose-ca-orderer.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose-ca-org0.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose-ca-org1.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose-ca-org2.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose-orderer-orderer0.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose-orderer-orderer1.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose-orderer-orderer2.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose-org0-peer0.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose-org1-peer0.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose-org2-peer0.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yaml_generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/yaml_generator.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -14,7 +29,11 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
   <component name="ProjectId" id="27XxNY2o8gKBfwaKGpC0QSLYw5t" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="true" />
@@ -22,6 +41,8 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/docker-compose-org0-peer0.yaml" />
+    <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/docker-compose-org0-peer0.yaml" />
   </component>
   <component name="RunManager" selected="Python.main">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -87,26 +108,34 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="506" y="215" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1649483406769">
+    <state x="506" y="215" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1649914158084">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="506" y="215" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1536.824@0.0.1536.824" timestamp="1649483406769" />
-    <state width="1515" height="139" key="GridCell.Tab.0.bottom" timestamp="1649692178874">
+    <state x="506" y="215" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1536.824@0.0.1536.824" timestamp="1649914158084" />
+    <state x="18" y="0" width="1350" height="610" key="DiffContextDialog" timestamp="1649926644068">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="139" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1649692178874" />
-    <state width="1515" height="139" key="GridCell.Tab.0.center" timestamp="1649692178874">
+    <state x="18" y="0" width="1350" height="610" key="DiffContextDialog/0.0.1536.824@0.0.1536.824" timestamp="1649926644068" />
+    <state x="549" y="167" key="FileChooserDialogImpl" timestamp="1649926607034">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="139" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1649692178874" />
-    <state width="1515" height="139" key="GridCell.Tab.0.left" timestamp="1649692178873">
+    <state x="549" y="167" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1649926607034" />
+    <state width="1515" height="227" key="GridCell.Tab.0.bottom" timestamp="1649926526357">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="139" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1649692178873" />
-    <state width="1515" height="139" key="GridCell.Tab.0.right" timestamp="1649692178874">
+    <state width="1515" height="227" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1649926526357" />
+    <state width="1515" height="227" key="GridCell.Tab.0.center" timestamp="1649926526357">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="139" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1649692178874" />
+    <state width="1515" height="227" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1649926526357" />
+    <state width="1515" height="227" key="GridCell.Tab.0.left" timestamp="1649926526357">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="227" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1649926526357" />
+    <state width="1515" height="227" key="GridCell.Tab.0.right" timestamp="1649926526357">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="227" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1649926526357" />
     <state width="1515" height="261" key="GridCell.Tab.1.bottom" timestamp="1649580096192">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -123,9 +152,13 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="1515" height="261" key="GridCell.Tab.1.right/0.0.1536.824@0.0.1536.824" timestamp="1649580096192" />
-    <state x="449" y="236" key="com.intellij.ide.util.TipDialog" timestamp="1649748097701">
+    <state x="449" y="236" key="com.intellij.ide.util.TipDialog" timestamp="1649917020410">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="449" y="236" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1649748097701" />
+    <state x="449" y="236" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1649917020410" />
+    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup" timestamp="1649913253858">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1649913253858" />
   </component>
 </project>
