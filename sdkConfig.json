@@ -1,1 +1,413 @@
-{"name":"faber","description":"Faber","version":"1.0.0","client":{"organization":"orderer","logging":{"level":"info"},"peer":{"timeout":{"connection":"10s","response":"180s","discovery":{"greylistExpiry":"10s"}}},"eventService":{"type":"deliver","timeout":{"connection":"15s","registrationResponse":"15s"}},"orderer":{"timeout":{"connection":"15s","response":"15s"}},"discovery":{"timeout":{"connection":"15s","response":"15s"}},"global":{"timeout":{"query":"180s","execute":"180s","resmgmt":"180s"},"cache":{"connectionIdle":"30s","eventServiceIdle":"2m","channelConfig":"30m","channelMembership":"30s","discovery":"10s","selection":"10m"}},"cryptoconfig":{"path":""},"credentialStore":{"path":"","cryptoStore":{"path":""}},"BCCSP":{"security":{"enable":true,"default":{"provider":"SW","hashAlgorithm":"SHA2","softVerify":true,"level":256,"pin":"pin","label":"label","library":""}}},"tlsCerts":{"key":{"path":""},"cert":{"path":""}}},"channel":null,"organizations":null,"orderers":null,"peers":null,"certificateAuthorities":null,"entryMatchers":null}
+{
+    "name": "faber",
+    "description": "Faber",
+    "version": "1.0.0",
+    "client": {
+        "organization": "orderer.test.com",
+        "logging": {
+            "level": "info"
+        },
+        "peer": {
+            "timeout": {
+                "connection": "10s",
+                "response": "180s",
+                "discovery": {
+                    "greylistExpiry": "10s"
+                }
+            }
+        },
+        "eventService": {
+            "type": "deliver",
+            "timeout": {
+                "connection": "15s",
+                "registrationResponse": "15s"
+            }
+        },
+        "orderer": {
+            "timeout": {
+                "connection": "15s",
+                "response": "15s"
+            }
+        },
+        "discovery": {
+            "timeout": {
+                "connection": "15s",
+                "response": "15s"
+            }
+        },
+        "global": {
+            "timeout": {
+                "query": "180s",
+                "execute": "180s",
+                "resmgmt": "180s"
+            },
+            "cache": {
+                "connectionIdle": "30s",
+                "eventServiceIdle": "2m",
+                "channelConfig": "30m",
+                "channelMembership": "30s",
+                "discovery": "10s",
+                "selection": "10m"
+            }
+        },
+        "cryptoconfig": {
+            "path": "/etc/hyperledger/crypto-config"
+        },
+        "credentialStore": {
+            "path": "/etc/hyperledger/sdk/store",
+            "cryptoStore": {
+                "path": "/etc/hyperledger/sdk/msp"
+            }
+        },
+        "BCCSP": {
+            "security": {
+                "enable": true,
+                "default": {
+                    "provider": "SW",
+                    "hashAlgorithm": "SHA2",
+                    "softVerify": true,
+                    "level": 256,
+                    "pin": "pin",
+                    "label": "label",
+                    "library": ""
+                }
+            }
+        },
+        "tlsCerts": {
+            "key": {
+                "path": ""
+            },
+            "cert": {
+                "path": ""
+            }
+        }
+    },
+    "channels": [
+        {
+            "name": "channel-1",
+            "orderers": [
+                "orderer0.orderer.test.com",
+                "orderer1.orderer.test.com",
+                "orderer2.orderer.test.com"
+            ],
+            "peers": [],
+            "polices": null,
+            "selection": null,
+            "eventService": null
+        }
+    ],
+    "organizations": [
+        {
+            "key": "orderer.test.com",
+            "mspId": "ordererMSP",
+            "peers": [
+                "ca.orderer.test.com",
+                "orderer0.orderer.test.com",
+                "orderer1.orderer.test.com",
+                "orderer2.orderer.test.com"
+            ]
+        },
+        {
+            "key": "org0.test.com",
+            "mspId": "org0MSP",
+            "peers": [
+                "ca.org0.test.com",
+                "peer0.org0.test.com"
+            ]
+        },
+        {
+            "key": "org1.test.com",
+            "mspId": "org1MSP",
+            "peers": [
+                "ca.org1.test.com",
+                "peer0.org1.test.com"
+            ]
+        },
+        {
+            "key": "org2.test.com",
+            "mspId": "org2MSP",
+            "peers": [
+                "ca.org2.test.com",
+                "peer0.org2.test.com"
+            ]
+        }
+    ],
+    "orderers": [
+        {
+            "key": "orderer0.orderer.test.com",
+            "url": "localhost:7050",
+            "grpcOptions": {
+                "ssl-target-name-override": "orderer0.orderer.test.com",
+                "keep-alive-time": "5s",
+                "keep-alive-timeout": "6s",
+                "keep-alive-permit": false,
+                "fail-fast": true,
+                "allow-insecure": false
+            },
+            "tlsCaCerts": {
+                "path": "/var/hyperledger/orderer/tls/tlscacerts"
+            }
+        },
+        {
+            "key": "orderer1.orderer.test.com",
+            "url": "localhost:7050",
+            "grpcOptions": {
+                "ssl-target-name-override": "orderer1.orderer.test.com",
+                "keep-alive-time": "5s",
+                "keep-alive-timeout": "6s",
+                "keep-alive-permit": false,
+                "fail-fast": true,
+                "allow-insecure": false
+            },
+            "tlsCaCerts": {
+                "path": "/var/hyperledger/orderer/tls/tlscacerts"
+            }
+        },
+        {
+            "key": "orderer2.orderer.test.com",
+            "url": "localhost:7050",
+            "grpcOptions": {
+                "ssl-target-name-override": "orderer2.orderer.test.com",
+                "keep-alive-time": "5s",
+                "keep-alive-timeout": "6s",
+                "keep-alive-permit": false,
+                "fail-fast": true,
+                "allow-insecure": false
+            },
+            "tlsCaCerts": {
+                "path": "/var/hyperledger/orderer/tls/tlscacerts"
+            }
+        }
+    ],
+    "peers": [
+        {
+            "key": "peer0.org0.test.com",
+            "url": "localhost:7051",
+            "eventUrl": "localhost:7053",
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.org0.test.com",
+                "keep-alive-time": "5s",
+                "keep-alive-timeout": "6s",
+                "keep-alive-permit": false,
+                "fail-fast": true,
+                "allow-insecure": false
+            },
+            "tlsCaCerts": {
+                "path": "/etc/hyperledger/fabric/tls/tlscacerts"
+            }
+        },
+        {
+            "key": "peer0.org1.test.com",
+            "url": "localhost:7051",
+            "eventUrl": "localhost:7053",
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.org1.test.com",
+                "keep-alive-time": "5s",
+                "keep-alive-timeout": "6s",
+                "keep-alive-permit": false,
+                "fail-fast": true,
+                "allow-insecure": false
+            },
+            "tlsCaCerts": {
+                "path": "/etc/hyperledger/fabric/tls/tlscacerts"
+            }
+        },
+        {
+            "key": "peer0.org2.test.com",
+            "url": "localhost:7051",
+            "eventUrl": "localhost:7053",
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.org2.test.com",
+                "keep-alive-time": "5s",
+                "keep-alive-timeout": "6s",
+                "keep-alive-permit": false,
+                "fail-fast": true,
+                "allow-insecure": false
+            },
+            "tlsCaCerts": {
+                "path": "/etc/hyperledger/fabric/tls/tlscacerts"
+            }
+        }
+    ],
+    "certificateAuthorities": [
+        {
+            "key": "ca.orderer.test.com",
+            "url": "http://localhost:7054",
+            "tlsCaCerts": {
+                "pem": "ca-cert.pem",
+                "path": "/etc/hyperledger/fabric-ca-server/ca-cert.pem",
+                "client": {
+                    "key": {
+                        "path": "",
+                        "pem": ""
+                    },
+                    "cert": {
+                        "path": "",
+                        "pem": ""
+                    }
+                }
+            },
+            "registrar": {
+                "enrollId": "admin",
+                "enrollSecret": "adminpw"
+            },
+            "caName": "ca.orderer.test.com"
+        },
+        {
+            "key": "ca.org0.test.com",
+            "url": "http://localhost:7054",
+            "tlsCaCerts": {
+                "pem": "ca-cert.pem",
+                "path": "/etc/hyperledger/fabric-ca-server/ca-cert.pem",
+                "client": {
+                    "key": {
+                        "path": "",
+                        "pem": ""
+                    },
+                    "cert": {
+                        "path": "",
+                        "pem": ""
+                    }
+                }
+            },
+            "registrar": {
+                "enrollId": "admin",
+                "enrollSecret": "adminpw"
+            },
+            "caName": "ca.org0.test.com"
+        },
+        {
+            "key": "ca.org1.test.com",
+            "url": "http://localhost:7054",
+            "tlsCaCerts": {
+                "pem": "ca-cert.pem",
+                "path": "/etc/hyperledger/fabric-ca-server/ca-cert.pem",
+                "client": {
+                    "key": {
+                        "path": "",
+                        "pem": ""
+                    },
+                    "cert": {
+                        "path": "",
+                        "pem": ""
+                    }
+                }
+            },
+            "registrar": {
+                "enrollId": "admin",
+                "enrollSecret": "adminpw"
+            },
+            "caName": "ca.org1.test.com"
+        },
+        {
+            "key": "ca.org2.test.com",
+            "url": "http://localhost:7054",
+            "tlsCaCerts": {
+                "pem": "ca-cert.pem",
+                "path": "/etc/hyperledger/fabric-ca-server/ca-cert.pem",
+                "client": {
+                    "key": {
+                        "path": "",
+                        "pem": ""
+                    },
+                    "cert": {
+                        "path": "",
+                        "pem": ""
+                    }
+                }
+            },
+            "registrar": {
+                "enrollId": "admin",
+                "enrollSecret": "adminpw"
+            },
+            "caName": "ca.org2.test.com"
+        }
+    ],
+    "entryMatchers": {
+        "peers": [
+            {
+                "pattern": "(\\w*)peer0.org0.test.com(\\w*)",
+                "urlSubstitutionExp": "localhost:7051",
+                "sslTargetOverrideUrlSubstitutionExp": "localhost:7053",
+                "mappedHost": "peer0.org0.test.com",
+                "ignoreEndpoint": false
+            },
+            {
+                "pattern": "(\\w*)peer0.org1.test.com(\\w*)",
+                "urlSubstitutionExp": "localhost:7051",
+                "sslTargetOverrideUrlSubstitutionExp": "localhost:7053",
+                "mappedHost": "peer0.org1.test.com",
+                "ignoreEndpoint": false
+            },
+            {
+                "pattern": "(\\w*)peer0.org2.test.com(\\w*)",
+                "urlSubstitutionExp": "localhost:7051",
+                "sslTargetOverrideUrlSubstitutionExp": "localhost:7053",
+                "mappedHost": "peer0.org2.test.com",
+                "ignoreEndpoint": false
+            }
+        ],
+        "orderer": [
+            {
+                "pattern": "(\\w*)orderer0.orderer.test.com(\\w*)",
+                "urlSubstitutionExp": "localhost:7050",
+                "sslTargetOverrideUrlSubstitutionExp": "orderer0.orderer.test.com",
+                "mappedHost": "orderer0.orderer.test.com",
+                "ignoreEndpoint": false
+            },
+            {
+                "pattern": "(\\w*)orderer1.orderer.test.com(\\w*)",
+                "urlSubstitutionExp": "localhost:7050",
+                "sslTargetOverrideUrlSubstitutionExp": "orderer1.orderer.test.com",
+                "mappedHost": "orderer1.orderer.test.com",
+                "ignoreEndpoint": false
+            },
+            {
+                "pattern": "(\\w*)orderer2.orderer.test.com(\\w*)",
+                "urlSubstitutionExp": "localhost:7050",
+                "sslTargetOverrideUrlSubstitutionExp": "orderer2.orderer.test.com",
+                "mappedHost": "orderer2.orderer.test.com",
+                "ignoreEndpoint": false
+            }
+        ],
+        "certificateAuthority": [
+            {
+                "pattern": "(\\w*)ca.orderer.test.com(\\w*)",
+                "urlSubstitutionExp": "http://localhost:7054",
+                "sslTargetOverrideUrlSubstitutionExp": "",
+                "mappedHost": "ca.orderer.test.com",
+                "ignoreEndpoint": false
+            },
+            {
+                "pattern": "(\\w*)ca.org0.test.com(\\w*)",
+                "urlSubstitutionExp": "http://localhost:7054",
+                "sslTargetOverrideUrlSubstitutionExp": "",
+                "mappedHost": "ca.org0.test.com",
+                "ignoreEndpoint": false
+            },
+            {
+                "pattern": "(\\w*)ca.org1.test.com(\\w*)",
+                "urlSubstitutionExp": "http://localhost:7054",
+                "sslTargetOverrideUrlSubstitutionExp": "",
+                "mappedHost": "ca.org1.test.com",
+                "ignoreEndpoint": false
+            },
+            {
+                "pattern": "(\\w*)ca.org2.test.com(\\w*)",
+                "urlSubstitutionExp": "http://localhost:7054",
+                "sslTargetOverrideUrlSubstitutionExp": "",
+                "mappedHost": "ca.org2.test.com",
+                "ignoreEndpoint": false
+            }
+        ],
+        "channel": [
+            {
+                "pattern": "channel-1$",
+                "urlSubstitutionExp": "",
+                "sslTargetOverrideUrlSubstitutionExp": "",
+                "mappedHost": "channel-1",
+                "ignoreEndpoint": false
+            }
+        ]
+    }
+}

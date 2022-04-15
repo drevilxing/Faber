@@ -7,13 +7,13 @@ import (
 )
 
 func GenerateGoSdkConfigExample(path string) error {
-	sdkConfig := sdk.GenerateGoSDK("faber", "Faber", "1.0.0", "orderer")
+	sdkConfig := sdk.GenerateGoSDK("faber", "Faber", "1.0.0", orgOrderer, Structure)
 
 	data, err := json.Marshal(sdkConfig)
 	if nil != err {
 		return err
 	}
-	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0766)
+	file, err := os.OpenFile(path, os.O_RDWR|os.O_TRUNC|os.O_CREATE, 0766)
 	defer func(file *os.File) {
 		_ = file.Close()
 	}(file)

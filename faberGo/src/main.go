@@ -1,6 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"faberGo/pkg/config"
+	"fmt"
+)
+
+var Structure *config.GenerateConfig
 
 func main() {
 	environmentPath := "./environmentConfig.json"

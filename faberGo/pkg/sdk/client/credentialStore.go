@@ -10,8 +10,9 @@ type CredentialStore struct {
 }
 
 func GenerateDefaultCredentialStore() *CredentialStore {
+	// TODO 这一项配置文件需要看情况
 	return &CredentialStore{
-		Path:        "",
-		CryptoStore: &CryptoStore{Path: ""},
+		Path:        "/etc/hyperledger/sdk/store",
+		CryptoStore: &CryptoStore{Path: "/etc/hyperledger/sdk/msp"},
 	}
 }

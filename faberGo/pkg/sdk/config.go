@@ -1,35 +1,198 @@
 package sdk
 
 import (
+	"errors"
+	"faberGo/pkg/config"
 	"faberGo/pkg/sdk/client"
-	"faberGo/pkg/sdk/entryMatcher"
 	"faberGo/pkg/sdk/target"
 )
 
 type GoSDK struct {
-	Name          string                     `json:"name"`
-	Description   string                     `json:"description"`
-	Version       string                     `json:"version"`
-	Client        *client.Config             `json:"client"`
-	Channel       *[]*target.ChannelConfig   `json:"channel"`
-	Organizations *[]*target.OrgConfig       `json:"organizations"`
-	Orderers      *[]*target.OrdererConfig   `json:"orderers"`
-	Peers         *[]*target.PeerConfig      `json:"peers"`
-	CA            *[]*target.CAConfig        `json:"certificateAuthorities"`
-	EntryMatchers *entryMatcher.EntryMatcher `json:"entryMatchers"`
+	Name          string                   `json:"name"`
+	Description   string                   `json:"description"`
+	Version       string                   `json:"version"`
+	Client        *client.Config           `json:"client"`
+	Channels      *[]*target.ChannelConfig `json:"channels"`
+	Organizations *[]*target.OrgConfig     `json:"organizations"`
+	Orderers      *[]*target.OrdererConfig `json:"orderers"`
+	Peers         *[]*target.PeerConfig    `json:"peers"`
+	CA            *[]*target.CAConfig      `json:"certificateAuthorities"`
+	EntryMatchers *target.EntryMatcher     `json:"entryMatchers"`
 }
 
-func GenerateGoSDK(name string, desc string, version string, org string) *GoSDK {
-	return &GoSDK{
-		Name:          name,
-		Description:   desc,
-		Version:       version,
-		Client:        client.GenerateDefaultClientConfig(org),
-		Channel:       nil,
-		Organizations: nil,
-		Orderers:      nil,
-		Peers:         nil,
-		CA:            nil,
-		EntryMatchers: nil,
+func GenerateGoSDK(name string, desc string, version string, org string, generate *config.GenerateConfig) *GoSDK {
+	// 生成基础配置文件
+	sdkConfig := &GoSDK{
+		Name:        name,
+		Description: desc,
+		Version:     version,
+		Client:      client.GenerateDefaultClientConfig(org),
+		Channels:    &[]*target.ChannelConfig{
+			//target.GenerateSimpleChannel(channel),
+		},
+		Organizations: &[]*target.OrgConfig{
+			//target.GenerateDefaultOrgConfig(org, mspId),
+		},
+		Orderers:      &[]*target.OrdererConfig{},
+		Peers:         &[]*target.PeerConfig{},
+		CA:            &[]*target.CAConfig{},
+		EntryMatchers: target.GenerateDefaultEntryMatcher(),
 	}
+
+	// 通道部分
+	// 遍历区块链网络
+	for _, element := range *generate.Blockchains {
+		// 遍历通道并加入配置文件
+		for _, channelElement := range *element.Channels {
+			*sdkConfig.Channels = append(*sdkConfig.Channels, target.GenerateSimpleChannel(channelElement))
+			*sdkConfig.EntryMatchers.Channel = append(*sdkConfig.EntryMatchers.Channel, &target.Matcher{
+				Pattern:    channelElement + "$",
+				MappedHost: channelElement,
+			})
+		}
+	}
+	// 组织部分
+	// 遍历组织
+	for _, element := range *generate.Groups {
+		*sdkConfig.Organizations = append(*sdkConfig.Organizations, target.GenerateDefaultOrgConfig(element.Key, target.MspId(element.Key)))
+		orgPointer, err := sdkConfig.FindOrg(element.Key)
+		if nil != err {
+			return nil
+		}
+		// 添加CA以及其他节点到组织信息内
+		// 添加CA节点
+		orgPointer.AddPeer(element.CA)
+		*sdkConfig.CA = append(*sdkConfig.CA, target.GenerateDefaultCAConfig(element.CA, "localhost:7054"))
+		sdkConfig.EntryMatchers.AddCA(element.CA)
+		// 添加Orderer节点
+		for _, peer := range *element.Node.Orderer {
+			orgPointer.AddPeer(peer)
+			// 添加到对应channel的order信息
+			for _, channelElement := range *element.Channel {
+				channelPointer, errChannelPointer := sdkConfig.FindChannel(channelElement)
+				if nil != errChannelPointer {
+					return nil
+				}
+				channelPointer.AddOrderer(peer)
+			}
+			// 添加到对应orderers内
+			*sdkConfig.Orderers = append(*sdkConfig.Orderers, target.GenerateDefaultOrdererConfig(peer, "localhost:7050"))
+			sdkConfig.EntryMatchers.AddOrderer(peer)
+		}
+		for _, peer := range *element.Node.LeaderPeers {
+			orgPointer.AddPeer(peer)
+			// 添加到对应channel的peer信息
+			for _, channelElement := range *element.Channel {
+				channelPointer, errChannelPointer := sdkConfig.FindChannel(channelElement)
+				if nil != errChannelPointer {
+					return nil
+				}
+				channelPointer.AddPeer(target.GenerateDefaultPeer(peer))
+			}
+			// 添加节点信息
+			sdkConfig.AddPeer(target.GenerateDefaultPeerConfig(peer, "localhost:7051", "localhost:7053"))
+			sdkConfig.EntryMatchers.AddPeer(peer)
+		}
+		for _, peer := range *element.Node.AnchorPeers {
+			orgPointer.AddPeer(peer)
+			// 添加到对应channel的peer信息
+			for _, channelElement := range *element.Channel {
+				channelPointer, errChannelPointer := sdkConfig.FindChannel(channelElement)
+				if nil != errChannelPointer {
+					return nil
+				}
+				channelPointer.AddPeer(target.GenerateDefaultPeer(peer))
+			}
+			// 添加节点信息
+			sdkConfig.AddPeer(target.GenerateDefaultPeerConfig(peer, "localhost:7051", "localhost:7053"))
+			sdkConfig.EntryMatchers.AddPeer(peer)
+		}
+		for _, peer := range *element.Node.CommittingPeers {
+			orgPointer.AddPeer(peer)
+			// 添加到对应channel的peer信息
+			for _, channelElement := range *element.Channel {
+				channelPointer, errChannelPointer := sdkConfig.FindChannel(channelElement)
+				if nil != errChannelPointer {
+					return nil
+				}
+				channelPointer.AddPeer(target.GenerateDefaultPeer(peer))
+			}
+			// 添加节点信息
+			sdkConfig.AddPeer(target.GenerateDefaultPeerConfig(peer, "localhost:7051", "localhost:7053"))
+			sdkConfig.EntryMatchers.AddPeer(peer)
+		}
+		for _, peer := range *element.Node.EndorsingPeers {
+			orgPointer.AddPeer(peer)
+			// 添加到对应channel的peer信息
+			for _, channelElement := range *element.Channel {
+				channelPointer, errChannelPointer := sdkConfig.FindChannel(channelElement)
+				if nil != errChannelPointer {
+					return nil
+				}
+				channelPointer.AddPeer(target.GenerateEndorsingPeer(peer))
+			}
+			// 添加节点信息
+			sdkConfig.AddPeer(target.GenerateDefaultPeerConfig(peer, "localhost:7051", "localhost:7053"))
+			sdkConfig.EntryMatchers.AddPeer(peer)
+		}
+	}
+	//for _, element := range *generate.Nodes {
+	//	fmt.Println(element)
+	//	//*sdkConfig.EntryMatchers = append(*sdkConfig.EntryMatchers, target.GenerateMatcherCommon(element.Key, "", "localhost", element.Key))
+	//}
+	return sdkConfig
+}
+
+func (that *GoSDK) FindChannel(key string) (*target.ChannelConfig, error) {
+	for _, element := range *that.Channels {
+		if key == element.Key {
+			return element, nil
+		}
+	}
+	return nil, errors.New(config.NotFoundErr)
+}
+
+func (that *GoSDK) FindOrg(key string) (*target.OrgConfig, error) {
+	for _, element := range *that.Organizations {
+		if key == element.Key {
+			return element, nil
+		}
+	}
+	return nil, errors.New(config.NotFoundErr)
+}
+
+func (that *GoSDK) FindOrderer(key string) (*target.OrdererConfig, error) {
+	for _, element := range *that.Orderers {
+		if key == element.Key {
+			return element, nil
+		}
+	}
+	return nil, errors.New(config.NotFoundErr)
+}
+
+func (that *GoSDK) AddPeer(peer *target.PeerConfig) {
+	for _, element := range *that.Peers {
+		if peer.Key == element.Key {
+			return
+		}
+	}
+	*that.Peers = append(*that.Peers, peer)
+}
+
+func (that *GoSDK) FindPeer(key string) (*target.PeerConfig, error) {
+	for _, element := range *that.Peers {
+		if key == element.Key {
+			return element, nil
+		}
+	}
+	return nil, errors.New(config.NotFoundErr)
+}
+
+func (that *GoSDK) FindCA(key string) (*target.CAConfig, error) {
+	for _, element := range *that.CA {
+		if key == element.Key {
+			return element, nil
+		}
+	}
+	return nil, errors.New(config.NotFoundErr)
 }

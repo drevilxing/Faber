@@ -176,13 +176,15 @@ func GenerateDeploymentConfigExample(path string) error {
 	}
 	orgPointer.JoinChannel(channel1)
 
+	// 全局保存配置信息
+	Structure = &generateConfig
 	// 处理结构体数据JSON
 	data, err := json.Marshal(generateConfig)
 	if nil != err {
 		return err
 	}
 	//fmt.Println(string(data))
-	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0766)
+	file, err := os.OpenFile(path, os.O_RDWR|os.O_TRUNC|os.O_CREATE, 0766)
 	defer func(file *os.File) {
 		_ = file.Close()
 	}(file)
