@@ -40,7 +40,7 @@ func GenerateDefaultCAConfig(name string, url string) *CAConfig {
 		TlsCaCerts: &CATlsCACerts{
 			Pem:  "ca-cert.pem",
 			Path: "/etc/hyperledger/fabric-ca-server/ca-cert.pem",
-			// TODO Client相关配置文件还存有疑问。
+			// TODO Client相关配置文件还存有疑问，应该是在启动阶段生成有一个对应的用户。
 			Client: &CAClientConfig{
 				Key: &TlsCertPair{
 					Path: "",
