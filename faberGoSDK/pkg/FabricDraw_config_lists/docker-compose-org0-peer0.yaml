@@ -1,0 +1,39 @@
+networks:
+  net:
+    external:
+      name: FabricDraw
+services:
+  peer0.org0.test.com:
+    command: peer node start
+    container_name: peer0.org0.test.com
+    environment:
+    - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+    - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=root_test
+    - FABRIC_LOGGING_SPEC=INFO
+    - CORE_PEER_TLS_ENABLED=true
+    - CORE_PEER_PROFILE_ENABLED=true
+    - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+    - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+    - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+    - CORE_PEER_ID=peer0.org0.test.com
+    - CORE_PEER_ADDRESS=peer0.org0.test.com:8051
+    - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+    - CORE_PEER_CHAINCODEADDRESS=peer0.org0.test.com:7052
+    - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+    - CORE_PEER_GOSSIP_BOOTSTRAP=127.0.0.1:7051
+    - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org0.test.com:8051
+    - CORE_PEER_LOCALMSPID=Org0MSP
+    image: hyperledger/fabric-peer:2.2.0
+    networks:
+    - net
+    ports:
+    - 8051:8051
+    volumes:
+    - /var/run/:/host/var/run/
+    - /root/opt/organizations/org0.test.com/peers/peer0.org0.test.com/msp:/etc/hyperledger/fabric/msp
+    - /root/opt/organizations/org0.test.com/peers/peer0.org0.test.com/tls:/etc/hyperledger/fabric/tls
+    - peer0.org0.test.com:/var/hyperledger/production
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+version: '2'
+volumes:
+  peer0.org0.test.com:

@@ -31,7 +31,7 @@ def manage_key(res):
     for channel in res["channels"][0]["peers"]:
         channels[channel["key"]] = channel
         del channels[channel["key"]]["key"]
-    res["channels"][0]["peer"] = channels
+    res["channels"][0]["peers"] = channels
     res["channels"] = res["channels"][0]
 
     # organizations部分
