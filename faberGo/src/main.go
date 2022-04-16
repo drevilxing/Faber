@@ -9,13 +9,16 @@ var Structure *config.GenerateConfig
 
 func main() {
 	environmentPath := "./environmentConfig.json"
-	err := GenerateDeploymentConfigExample(environmentPath)
-	if nil != err {
-		fmt.Println(err.Error())
+	errEnv := GenerateDeploymentConfigExample(environmentPath)
+	if nil != errEnv {
+		fmt.Println(errEnv.Error())
 	}
+
+	structure := LoadGenerateConfigFromJsonFile(environmentPath)
+
 	sdkPath := "./sdkConfig.json"
-	err = GenerateGoSdkConfigExample(sdkPath)
-	if nil != err {
-		fmt.Println(err.Error())
+	errSdk := GenerateGoSdkConfigExample(sdkPath, structure)
+	if nil != errSdk {
+		fmt.Println(errSdk.Error())
 	}
 }

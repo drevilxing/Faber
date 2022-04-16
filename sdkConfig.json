@@ -51,12 +51,12 @@
             }
         },
         "cryptoconfig": {
-            "path": "/etc/hyperledger/crypto-config"
+            "path": "/root/go/src/fabric-go-sdk/fixtures/crypto-config"
         },
         "credentialStore": {
-            "path": "/etc/hyperledger/sdk/store",
+            "path": "/tmp/state-store",
             "cryptoStore": {
-                "path": "/etc/hyperledger/sdk/msp"
+                "path": "/tmp/msp"
             }
         },
         "BCCSP": {
@@ -79,7 +79,8 @@
             },
             "cert": {
                 "path": ""
-            }
+            },
+            "systemCertPool": true
         }
     },
     "channels": [
@@ -145,7 +146,7 @@
                 "allow-insecure": false
             },
             "tlsCaCerts": {
-                "path": "/var/hyperledger/orderer/tls/tlscacerts"
+                "path": "/var/hyperledger/orderer/tls/tlscacerts/tls.pem"
             }
         },
         {
@@ -160,7 +161,7 @@
                 "allow-insecure": false
             },
             "tlsCaCerts": {
-                "path": "/var/hyperledger/orderer/tls/tlscacerts"
+                "path": "/var/hyperledger/orderer/tls/tlscacerts/tls.pem"
             }
         },
         {
@@ -175,7 +176,7 @@
                 "allow-insecure": false
             },
             "tlsCaCerts": {
-                "path": "/var/hyperledger/orderer/tls/tlscacerts"
+                "path": "/var/hyperledger/orderer/tls/tlscacerts/tls.pem"
             }
         }
     ],
@@ -193,7 +194,7 @@
                 "allow-insecure": false
             },
             "tlsCaCerts": {
-                "path": "/etc/hyperledger/fabric/tls/tlscacerts"
+                "path": "/etc/hyperledger/fabric/tls/tlscacerts/tls.pem"
             }
         },
         {
@@ -209,7 +210,7 @@
                 "allow-insecure": false
             },
             "tlsCaCerts": {
-                "path": "/etc/hyperledger/fabric/tls/tlscacerts"
+                "path": "/etc/hyperledger/fabric/tls/tlscacerts/tls.pem"
             }
         },
         {
@@ -225,7 +226,7 @@
                 "allow-insecure": false
             },
             "tlsCaCerts": {
-                "path": "/etc/hyperledger/fabric/tls/tlscacerts"
+                "path": "/etc/hyperledger/fabric/tls/tlscacerts/tls.pem"
             }
         }
     ],

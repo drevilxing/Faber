@@ -1,10 +1,12 @@
 package sdk
 
 import (
+	"encoding/json"
 	"errors"
 	"faberGo/pkg/config"
 	"faberGo/pkg/sdk/client"
 	"faberGo/pkg/sdk/target"
+	"os"
 )
 
 type GoSDK struct {
@@ -18,6 +20,7 @@ type GoSDK struct {
 	Peers         *[]*target.PeerConfig    `json:"peers"`
 	CA            *[]*target.CAConfig      `json:"certificateAuthorities"`
 	EntryMatchers *target.EntryMatcher     `json:"entryMatchers"`
+	host          *[]string
 }
 
 func GenerateGoSDK(name string, desc string, version string, org string, generate *config.GenerateConfig) *GoSDK {
@@ -37,6 +40,7 @@ func GenerateGoSDK(name string, desc string, version string, org string, generat
 		Peers:         &[]*target.PeerConfig{},
 		CA:            &[]*target.CAConfig{},
 		EntryMatchers: target.GenerateDefaultEntryMatcher(),
+		host:          &[]string{},
 	}
 
 	// 通道部分
@@ -136,10 +140,10 @@ func GenerateGoSDK(name string, desc string, version string, org string, generat
 			sdkConfig.EntryMatchers.AddPeer(peer)
 		}
 	}
-	//for _, element := range *generate.Nodes {
-	//	fmt.Println(element)
-	//	//*sdkConfig.EntryMatchers = append(*sdkConfig.EntryMatchers, target.GenerateMatcherCommon(element.Key, "", "localhost", element.Key))
-	//}
+	for _, element := range *generate.Nodes {
+		//fmt.Println(element.Key, element.Bootstrap, element.Address)
+		*sdkConfig.host = append(*sdkConfig.host, element.Address.Host+":"+element.Address.FabricPort+" "+element.Key)
+	}
 	return sdkConfig
 }
 
@@ -195,4 +199,23 @@ func (that *GoSDK) FindCA(key string) (*target.CAConfig, error) {
 		}
 	}
 	return nil, errors.New(config.NotFoundErr)
+}
+
+func (that *GoSDK) SaveHost(path string) error {
+	data, err := json.Marshal(*that.host)
+	if nil != err {
+		return err
+	}
+	file, err := os.OpenFile(path+"host", os.O_RDWR|os.O_TRUNC|os.O_CREATE, 0766)
+	defer func(file *os.File) {
+		_ = file.Close()
+	}(file)
+	if nil != err {
+		return err
+	}
+	_, err = file.Write(data)
+	if nil != err {
+		return err
+	}
+	return file.Sync()
 }

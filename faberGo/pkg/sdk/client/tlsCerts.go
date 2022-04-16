@@ -9,13 +9,15 @@ type TlsCert struct {
 }
 
 type TlsCerts struct {
-	Key  *TlsKey  `json:"key"`
-	Cert *TlsCert `json:"cert"`
+	Key            *TlsKey  `json:"key"`
+	Cert           *TlsCert `json:"cert"`
+	SystemCertPool bool     `json:"systemCertPool"`
 }
 
 func GenerateDefaultTlsCerts() *TlsCerts {
 	return &TlsCerts{
-		Key:  &TlsKey{Path: ""},
-		Cert: &TlsCert{Path: ""},
+		Key:            &TlsKey{Path: ""},
+		Cert:           &TlsCert{Path: ""},
+		SystemCertPool: true,
 	}
 }
