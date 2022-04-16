@@ -1,5 +1,7 @@
 package target
 
+import "fmt"
+
 type ChannelPeer struct {
 	Key            string `json:"key"`
 	EndorsingPeer  bool   `json:"endorsingPeer"`
@@ -113,16 +115,17 @@ func GenerateEndorsingPeer(key string) *ChannelPeer {
 //}
 
 func (that *ChannelConfig) AddPeer(peer *ChannelPeer) {
+	fmt.Println(*that.Peers)
 	for _, element := range *that.Peers {
 		if peer.Key == element.Key {
 			element.EndorsingPeer = element.EndorsingPeer || peer.EndorsingPeer
 			element.ChaincodeQuery = element.ChaincodeQuery || peer.ChaincodeQuery
 			element.LedgerQuery = element.LedgerQuery || peer.LedgerQuery
 			element.EventSource = element.EventSource || peer.EventSource
-		} else {
-			*that.Peers = append(*that.Peers, peer)
+			return
 		}
 	}
+	*that.Peers = append(*that.Peers, peer)
 }
 
 func (that *ChannelConfig) AddOrderer(orderer string) {

@@ -6,21 +6,22 @@ import (
 	"faberGo/pkg/config"
 	"faberGo/pkg/sdk/client"
 	"faberGo/pkg/sdk/target"
+	"fmt"
 	"os"
 )
 
 type GoSDK struct {
-	Name          string                   `json:"name"`
-	Description   string                   `json:"description"`
-	Version       string                   `json:"version"`
-	Client        *client.Config           `json:"client"`
-	Channels      *[]*target.ChannelConfig `json:"channels"`
-	Organizations *[]*target.OrgConfig     `json:"organizations"`
-	Orderers      *[]*target.OrdererConfig `json:"orderers"`
-	Peers         *[]*target.PeerConfig    `json:"peers"`
-	CA            *[]*target.CAConfig      `json:"certificateAuthorities"`
-	EntryMatchers *target.EntryMatcher     `json:"entryMatchers"`
-	host          *[]string
+	Name           string                   `json:"name"`
+	Description    string                   `json:"description"`
+	Version        string                   `json:"version"`
+	Client         *client.Config           `json:"client"`
+	Channels       *[]*target.ChannelConfig `json:"channels"`
+	Organizations  *[]*target.OrgConfig     `json:"organizations"`
+	Orderers       *[]*target.OrdererConfig `json:"orderers"`
+	Peers          *[]*target.PeerConfig    `json:"peers"`
+	CA             *[]*target.CAConfig      `json:"certificateAuthorities"`
+	EntityMatchers *target.EntityMatcher    `json:"entityMatchers"`
+	host           *[]string
 }
 
 func GenerateGoSDK(name string, desc string, version string, org string, generate *config.GenerateConfig) *GoSDK {
@@ -36,11 +37,11 @@ func GenerateGoSDK(name string, desc string, version string, org string, generat
 		Organizations: &[]*target.OrgConfig{
 			//target.GenerateDefaultOrgConfig(org, mspId),
 		},
-		Orderers:      &[]*target.OrdererConfig{},
-		Peers:         &[]*target.PeerConfig{},
-		CA:            &[]*target.CAConfig{},
-		EntryMatchers: target.GenerateDefaultEntryMatcher(),
-		host:          &[]string{},
+		Orderers:       &[]*target.OrdererConfig{},
+		Peers:          &[]*target.PeerConfig{},
+		CA:             &[]*target.CAConfig{},
+		EntityMatchers: target.GenerateDefaultEntityMatcher(),
+		host:           &[]string{},
 	}
 
 	// 通道部分
@@ -48,8 +49,8 @@ func GenerateGoSDK(name string, desc string, version string, org string, generat
 	for _, element := range *generate.Blockchains {
 		// 遍历通道并加入配置文件
 		for _, channelElement := range *element.Channels {
-			*sdkConfig.Channels = append(*sdkConfig.Channels, target.GenerateSimpleChannel(channelElement))
-			*sdkConfig.EntryMatchers.Channel = append(*sdkConfig.EntryMatchers.Channel, &target.Matcher{
+			*sdkConfig.Channels = append(*sdkConfig.Channels, target.GenerateDefaultChannel(channelElement))
+			*sdkConfig.EntityMatchers.Channel = append(*sdkConfig.EntityMatchers.Channel, &target.Matcher{
 				Pattern:    channelElement + "$",
 				MappedHost: channelElement,
 			})
@@ -67,7 +68,7 @@ func GenerateGoSDK(name string, desc string, version string, org string, generat
 		// 添加CA节点
 		orgPointer.AddPeer(element.CA)
 		*sdkConfig.CA = append(*sdkConfig.CA, target.GenerateDefaultCAConfig(element.CA, "localhost:7054"))
-		sdkConfig.EntryMatchers.AddCA(element.CA)
+		sdkConfig.EntityMatchers.AddCA(element.CA)
 		// 添加Orderer节点
 		for _, peer := range *element.Node.Orderer {
 			orgPointer.AddPeer(peer)
@@ -81,7 +82,7 @@ func GenerateGoSDK(name string, desc string, version string, org string, generat
 			}
 			// 添加到对应orderers内
 			*sdkConfig.Orderers = append(*sdkConfig.Orderers, target.GenerateDefaultOrdererConfig(peer, "localhost:7050"))
-			sdkConfig.EntryMatchers.AddOrderer(peer)
+			sdkConfig.EntityMatchers.AddOrderer(peer)
 		}
 		for _, peer := range *element.Node.LeaderPeers {
 			orgPointer.AddPeer(peer)
@@ -95,7 +96,7 @@ func GenerateGoSDK(name string, desc string, version string, org string, generat
 			}
 			// 添加节点信息
 			sdkConfig.AddPeer(target.GenerateDefaultPeerConfig(peer, "localhost:7051", "localhost:7053"))
-			sdkConfig.EntryMatchers.AddPeer(peer)
+			sdkConfig.EntityMatchers.AddPeer(peer)
 		}
 		for _, peer := range *element.Node.AnchorPeers {
 			orgPointer.AddPeer(peer)
@@ -109,7 +110,7 @@ func GenerateGoSDK(name string, desc string, version string, org string, generat
 			}
 			// 添加节点信息
 			sdkConfig.AddPeer(target.GenerateDefaultPeerConfig(peer, "localhost:7051", "localhost:7053"))
-			sdkConfig.EntryMatchers.AddPeer(peer)
+			sdkConfig.EntityMatchers.AddPeer(peer)
 		}
 		for _, peer := range *element.Node.CommittingPeers {
 			orgPointer.AddPeer(peer)
@@ -123,12 +124,13 @@ func GenerateGoSDK(name string, desc string, version string, org string, generat
 			}
 			// 添加节点信息
 			sdkConfig.AddPeer(target.GenerateDefaultPeerConfig(peer, "localhost:7051", "localhost:7053"))
-			sdkConfig.EntryMatchers.AddPeer(peer)
+			sdkConfig.EntityMatchers.AddPeer(peer)
 		}
 		for _, peer := range *element.Node.EndorsingPeers {
 			orgPointer.AddPeer(peer)
 			// 添加到对应channel的peer信息
 			for _, channelElement := range *element.Channel {
+				fmt.Println(channelElement)
 				channelPointer, errChannelPointer := sdkConfig.FindChannel(channelElement)
 				if nil != errChannelPointer {
 					return nil
@@ -137,7 +139,7 @@ func GenerateGoSDK(name string, desc string, version string, org string, generat
 			}
 			// 添加节点信息
 			sdkConfig.AddPeer(target.GenerateDefaultPeerConfig(peer, "localhost:7051", "localhost:7053"))
-			sdkConfig.EntryMatchers.AddPeer(peer)
+			sdkConfig.EntityMatchers.AddPeer(peer)
 		}
 	}
 	for _, element := range *generate.Nodes {
