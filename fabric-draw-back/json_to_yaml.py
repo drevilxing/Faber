@@ -28,11 +28,16 @@ def delete_double_slash(res):
 def manage_key(res):
     # channels部分
     channels = dict()
-    for channel in res["channels"][0]["peers"]:
-        channels[channel["key"]] = channel
-        del channels[channel["key"]]["key"]
-    res["channels"][0]["peers"] = channels
-    res["channels"] = res["channels"][0]
+    for channel in res["channels"]:
+        peers = dict()
+        for peer in channel['peers']:
+            peers[peer["key"]] = peer
+            del peers[peer["key"]]["key"]
+        channel["peers"] = peers
+
+        channels[channel["name"]] = channel
+        del channels[channel["name"]]["name"]
+    res["channels"] = channels
 
     # organizations部分
     organizations = dict()
