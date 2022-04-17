@@ -20,24 +20,24 @@ func main() {
 	orgs := []*sdkInit.OrgInfo{
 		{
 			OrgAdminUser:  "Admin",
-			OrgName:       "Org1",
-			OrgMspId:      "Org1MSP",
+			OrgName:       "Org0",
+			OrgMspId:      "Org0MSP",
 			OrgUser:       "User1",
 			OrgPeerNum:    2,
-			OrgAnchorFile: "/root/opt/Faber/faberGoSDK/pkg/FabricDraw_config_lists/channel-artifacts/Org1MSPanchors.tx",
+			OrgAnchorFile: "/root/opt/channel-artifacts/Org0MSPanchors.tx",
 		},
 	}
 
 	// init sdk env info
 	info := sdkInit.SdkEnvInfo{
-		ChannelID:        "FabricDraw",
-		ChannelConfig:    "/root/opt/Faber/faberGo-SDK/pkg/FabricDraw_config_lists/channel-artifacts/channel.tx",
+		ChannelID:        "FabricDrawChannel",
+		ChannelConfig:    "/root/opt/channel-artifacts/channel-1.tx",
 		Orgs:             orgs,
 		OrdererAdminUser: "Admin",
-		OrdererOrgName:   "OrdererOrg",
-		OrdererEndpoint:  "orderer.example.com",
+		OrdererOrgName:   "Orderer",
+		OrdererEndpoint:  "orderer0.orderer.test.com",
 		ChaincodeID:      cc_name,
-		ChaincodePath:    "/root/opt/Faber/faberGoSDK/pkg/chaincode/",
+		ChaincodePath:    "/root/hyperledger/Faber/faberGoSDK/pkg/chaincode/",
 		ChaincodeVersion: cc_version,
 	}
 
