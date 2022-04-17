@@ -43,7 +43,7 @@ type ChannelEventService struct {
 }
 
 type ChannelConfig struct {
-	Key          string               `json:"name"`
+	Key          string               `json:"key"`
 	Orderers     *[]string            `json:"orderers"`
 	Peers        *[]*ChannelPeer      `json:"peers"`
 	Polices      *ChannelPolices      `json:"polices"`
