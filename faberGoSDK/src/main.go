@@ -1,7 +1,7 @@
-package mainpackage main
+package main
 
 import (
-	"faberGoSDK/pkg/sdkInit"
+	"sdkInit"
 	"fmt"
 	"os"
 	"time"
@@ -37,7 +37,7 @@ func main() {
 		OrdererOrgName:   "Orderer",
 		OrdererEndpoint:  "orderer0.orderer.test.com",
 		ChaincodeID:      cc_name,
-		ChaincodePath:    "/root/hyperledger/Faber/faberGoSDK/pkg/chaincode/",
+		ChaincodePath:    "/root/.go/src/Faber/faberGoSDK/pkg/chaincode/",
 		ChaincodeVersion: cc_version,
 	}
 

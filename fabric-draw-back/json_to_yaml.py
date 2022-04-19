@@ -5,7 +5,7 @@ import json
 # 删除配置文件中不需要的空字段和false字段
 def delete_null_and_false_r(res):
     for k, v in res.items():
-        print(k,v)
+        print(k, v)
         if isinstance(v, dict):
             delete_null_and_false_r(v)
         elif v == '':
@@ -13,7 +13,6 @@ def delete_null_and_false_r(res):
         elif v is False:
             del res[k]
     return res
-
 
 
 def delete_double_slash(res):
@@ -28,11 +27,16 @@ def delete_double_slash(res):
 def manage_key(res):
     # channels部分
     channels = dict()
-    for channel in res["channels"][0]["peers"]:
-        channels[channel["key"]] = channel
-        del channels[channel["key"]]["key"]
-    res["channels"][0]["peers"] = channels
-    res["channels"] = res["channels"][0]
+    for channel in res["channels"]:
+        peers = dict()
+        for peer in channel['peers']:
+            peers[peer["key"]] = peer
+            del peers[peer["key"]]["key"]
+        channel["peers"] = peers
+
+        channels[channel["name"]] = channel
+        del channels[channel["name"]]["name"]
+    res["channels"] = channels
 
     # organizations部分
     organizations = dict()
@@ -76,8 +80,9 @@ def json_to_yaml(path):
     # 删除无用的空字段和false字段
     # res = delete_null_and_false_r(res)
     # 写入文件
-    print(res)
     with open('sdkConfig.yaml', 'w', encoding="utf-8") as file:
+        yaml.dump(res, file, Dumper=yaml.Dumper)
+    with open('../faberGoSDK/src/sdkConfig.yaml', 'w', encoding="utf-8") as file:
         yaml.dump(res, file, Dumper=yaml.Dumper)
 
 
