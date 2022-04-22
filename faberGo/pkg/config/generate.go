@@ -6,6 +6,7 @@ import (
 	"faberGo/pkg/config/nodes"
 	"faberGo/pkg/config/org"
 	"fmt"
+	"github.com/gofrs/uuid"
 )
 
 const NotFoundErr = "Not Found. "
@@ -15,6 +16,7 @@ const DefaultPeer = "127.0.0.1:7051"
 const DefaultCA = "127.0.0.1:7054"
 
 type GenerateConfig struct {
+	Key         string
 	Groups      *[]*org.Org               `json:"groups"`
 	Nodes       *[]*nodes.Node            `json:"nodes"`
 	Blockchains *[]*blockchain.Blockchain `json:"blockchains"`
@@ -22,6 +24,7 @@ type GenerateConfig struct {
 
 func GenGenerateConfig() GenerateConfig {
 	return GenerateConfig{
+		Key:         uuid.Must(uuid.NewV4()).String(),
 		Groups:      &[]*org.Org{},
 		Nodes:       &[]*nodes.Node{},
 		Blockchains: &[]*blockchain.Blockchain{},
@@ -66,4 +69,18 @@ func (that GenerateConfig) AddNode(node *nodes.Node) {
 
 func (that GenerateConfig) AddBlockchain(blockchain *blockchain.Blockchain) {
 	*that.Blockchains = append(*that.Blockchains, blockchain)
+}
+
+func (that GenerateConfig) AddBlockchainChannel(blockchain string, channel string) {
+	for _, element := range *that.Blockchains {
+		if blockchain == element.Key {
+			for _, inner := range *element.Channels {
+				if channel == inner {
+					return
+				}
+			}
+			*element.Channels = append(*element.Channels, channel)
+			return
+		}
+	}
 }
