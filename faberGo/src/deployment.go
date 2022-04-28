@@ -177,7 +177,7 @@ func GenerateDeploymentConfigExample(path string) error {
 	orgPointer.JoinChannel(channel1)
 
 	// 全局保存配置信息
-	Structure = &generateConfig
+	currentConfig = &generateConfig
 	// 处理结构体数据JSON
 	data, err := json.Marshal(generateConfig)
 	if nil != err {
