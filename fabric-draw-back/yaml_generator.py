@@ -1,6 +1,7 @@
 import yaml
 import re
 import os
+import json
 from ruamel.yaml import YAML
 
 
@@ -194,3 +195,121 @@ class PeerYamlGenerator(YamlGenerator):
         with open(file_name, 'a') as file:
             file.write(f'volumes:\n  {node_id}:\n')
         return file_name
+
+
+def generate_ca(ca_id, ca_information, fabric_name, target_host, crypto_base):
+    node_name, group_name, domain = ca_id.split('.', 2)
+    address = ca_information['address']
+    ca_yaml_generator = CAYamlGenerator()
+    file_name = ca_yaml_generator.generate(ca_id, group_name, fabric_name, address['fabric_port'], crypto_base)
+    return file_name
+
+
+def generate_peer(peer_id, peer_information, order_group_id, fabric_name, target_host, ca_port, crypto_base):
+    node_name, group_name, domain = peer_id.split('.', 2)
+    address = peer_information['address']
+    peer_yaml_generator = PeerYamlGenerator()
+    file_name = peer_yaml_generator.generate(peer_id, fabric_name, address['fabric_port'], crypto_base)
+    return file_name
+
+
+def generate_configtx(groups: dict, nodes: dict, orderers: dict, fabric_name: str, crypto_base: str):
+    configtx = ConfigTXYamlGenerator(fabric_name, crypto_base)
+    # 读取yaml文件
+    # 生成groups、nodes、orderers
+    # 输出至configtx.yaml文件
+    # 返回文件名称
+    return configtx.input_from("./template/configtx.yaml") \
+        .generate(groups, nodes, orderers) \
+        .output_to(f"configtx.yaml") \
+        .get_filename()
+
+
+def generate_order(order_id, order_information, fabric_name, channel_id, peer_group_ids, configtx_filename: str, crypto_base='/root/opt'):
+    node_name, group_name, domain = order_id.split('.', 2)
+    address = order_information['address']
+    orderer_yaml_generator = OrderYamlGenerator()
+    filename = orderer_yaml_generator.generate(order_id, group_name, node_name, fabric_name, address["fabric_port"], crypto_base)
+
+
+def parse_json(network_topology_json):
+    order_group_id = ''
+    order_ca_port = ''
+    target_host = ''
+    peer_group_ids = []
+    crypto_path = "/root/opt"
+    # 读取group信息
+    for blockchain in network_topology_json['blockchains']:
+        for group in network_topology_json['groups']:
+            # orderer节点
+            if group['key'].split('.', 1)[0] == 'orderer':
+                # 获取orderer节点groupid
+                order_group_id = group['key']
+                # 填入ca端口号
+                for node in network_topology_json['nodes']:
+                    if node['key'] == group['nodes']['ca']:
+                        order_ca_port = node['address']['fabric_port']
+                # 填入ca的ip地址
+                for node in network_topology_json['nodes']:
+                    if node['key'] == group['nodes']['ca']:
+                        target_host = node['address']['host']
+            else:
+                # 添加peer节点
+                peer_group_ids.append(group['key'])
+            # 生成ca证书
+
+            for node in network_topology_json['nodes']:
+                if node['key'] == group['nodes']['ca']:
+                    generate_ca(group['nodes']['ca'], node, blockchain['name'], target_host, crypto_path)
+        print("成功生成ca配置文件")
+
+        # 对每个peer节点
+        for org_id in peer_group_ids:
+            # 获取peer结点的信息
+            for node in network_topology_json['nodes']:
+                for group in network_topology_json['groups']:
+                    if group['key'] == org_id:
+                        if node['key'] == group['nodes']['ca']:
+                            peer_ca_port = node['address']['fabric_port']
+
+            for group in network_topology_json['groups']:
+                if group['key'] == org_id:
+                    leader_peers_ids = group['nodes']['leader_peers']
+                    anchor_peers_ids = group['nodes']['anchor_peers']
+                    committing_peers_ids = group['nodes']['committing_peers']
+                    endorsing_peers_ids = group['nodes']['endorsing_peers']
+
+            peer_ids = list(set(leader_peers_ids).union(
+                set(anchor_peers_ids).union(set(committing_peers_ids)).union(set(endorsing_peers_ids))))
+            # 生成peer节点
+
+            for peer_id in peer_ids:
+                for node in network_topology_json['nodes']:
+                    if peer_id == node['key']:
+                        generate_peer(peer_id, node, order_group_id, blockchain['name'], target_host, peer_ca_port, crypto_path)
+        orderers = dict()
+        print("成功生成peer节点配置文件")
+
+        for node in network_topology_json["nodes"]:
+            if "orderer" in node["type"]:
+                orderers[node['key']] = node
+
+        # 生成configtx文件
+        configtx_filename = generate_configtx(network_topology_json["groups"], network_topology_json["nodes"], orderers, blockchain["name"], crypto_path)
+        print("成功生成configtx通道配置文件")
+
+        for group in network_topology_json['groups']:
+            if group['key'] == order_group_id:
+                for order_id in group['nodes']['orderer']:
+                    for node in network_topology_json['nodes']:
+                        if node['key'] == order_id:
+                            generate_order(order_id, node, blockchain['name'], blockchain['channels'][0], peer_group_ids, configtx_filename, crypto_path)
+        print("成功生成orderer节点配置文件")
+
+
+if __name__ == '__main__':
+    json_file = 'config.json'
+    with open(json_file) as js:
+        network_json = json.load(js)
+    parse_json(network_json)
+    print('该模块运行完毕')

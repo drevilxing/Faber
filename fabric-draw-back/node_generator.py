@@ -1,7 +1,6 @@
 import json
 import paramiko
 import time
-import io
 import os
 import stat
 from yaml_generator import CAYamlGenerator, OrderYamlGenerator, PeerYamlGenerator, ConfigTXYamlGenerator
@@ -46,7 +45,7 @@ def sftp_put_r(sftp_client, local_path, remote_path):
             sftp_put_r(sftp_client, os.path.join(local_path, item), f'{remote_path}/{item}')
 
 
-def generate_ca(ca_id, ca_information, fabric_name, target_host, crypto_base):
+def start_ca(ca_id, ca_information, fabric_name, target_host, crypto_base):
     node_name, group_name, domain = ca_id.split('.', 2)
     address = ca_information['address']
     # 连接服务器
@@ -73,9 +72,8 @@ def generate_ca(ca_id, ca_information, fabric_name, target_host, crypto_base):
             # 加入docker swarm
             stdin, stdout, stderr = ssh.exec_command(f'python3 {crypto_base}/node_build.py --func_name join_docker_swarm {node_host} {target_host} {crypto_base}')
             stdout.channel.recv_exit_status()
-    # 生成ca配置文件
-    ca_yaml_generator = CAYamlGenerator()
-    file_name = ca_yaml_generator.generate(ca_id, group_name, fabric_name, address['fabric_port'], crypto_base)
+    # 获取ca配置文件
+    file_name = f'docker-compose-ca-{group_name}.yaml'
     # 将配置文件传输至服务器
     ftp_client.put(file_name, f'{crypto_base}/{file_name}')
     # 启动ca容器
@@ -91,7 +89,7 @@ def generate_ca(ca_id, ca_information, fabric_name, target_host, crypto_base):
     ssh.close()
 
 
-def generate_order_msp(order_id, order_information, ca_port, crypto_base):
+def start_order_msp(order_id, order_information, ca_port, crypto_base):
     node_name, group_name, domain = order_id.split('.', 2)
     # 连接服务器
     address = order_information['address']
@@ -126,7 +124,7 @@ def generate_order_msp(order_id, order_information, ca_port, crypto_base):
     ftp_client.close()
 
 
-def generate_peer(peer_id, peer_information, order_group_id, fabric_name, target_host, ca_port, crypto_base):
+def start_peer(peer_id, peer_information, order_group_id, fabric_name, target_host, ca_port, crypto_base):
     node_name, group_name, domain = peer_id.split('.', 2)
     address = peer_information['address']
     ssh = paramiko.SSHClient()
@@ -153,9 +151,9 @@ def generate_peer(peer_id, peer_information, order_group_id, fabric_name, target
         stdin, stdout, stderr = ssh.exec_command(f'python {crypto_base}/node_build.py --func_name join_docker_swarm {node_host} {target_host} {crypto_base}')
         stdout.channel.recv_exit_status()
 
-    # 生成配置文件并上传
-    peer_yaml_generator = PeerYamlGenerator()
-    file_name = peer_yaml_generator.generate(peer_id, fabric_name, address['fabric_port'], crypto_base)
+    # 获取配置文件并上传
+    node_name, org_name, domain = peer_id.split('.', 2)
+    file_name = f'docker-compose-{org_name}-{node_name}.yaml'
     ftp_client.put(file_name, f'{crypto_base}/{file_name}')
     # 构建节点
     stdin, stdout, stderr = ssh.exec_command(f'python3 {crypto_base}/node_build.py --func_name org_msp_generate {group_name} {domain} {ca_port} {crypto_base}')
@@ -176,7 +174,7 @@ def generate_peer(peer_id, peer_information, order_group_id, fabric_name, target
     ftp_client.close()
 
 
-def generate_order(order_id, order_information, fabric_name, channel_id, peer_group_ids, configtx_filename: str, crypto_base='/root/opt'):
+def start_order(order_id, order_information, fabric_name, channel_id, peer_group_ids, configtx_filename: str, crypto_base='/root/opt'):
     node_name, group_name, domain = order_id.split('.', 2)
     address = order_information['address']
     ssh = paramiko.SSHClient()
@@ -188,14 +186,14 @@ def generate_order(order_id, order_information, fabric_name, channel_id, peer_gr
     for peer in peer_group_ids:
         sftp_put_r(ftp_client, f"organizations/{peer}/msp/cacerts", f"{crypto_base}/organizations/{peer}/msp/cacerts")
         ftp_client.put(f"organizations/{peer}/msp/config.yaml", f"{crypto_base}/organizations/{peer}/msp/config.yaml")
-    orderer_yaml_generator = OrderYamlGenerator()
-    filename = orderer_yaml_generator.generate(order_id, group_name, node_name, fabric_name, address["fabric_port"], crypto_base)
-    ftp_client.put(filename, f"{crypto_base}/{filename}")
+
+    file_name = f'docker-compose-{group_name}-{node_name}.yaml'
+    ftp_client.put(file_name, f"{crypto_base}/{file_name}")
     ftp_client.put(configtx_filename, f'{crypto_base}/{configtx_filename}')
     while True:
         try:
             ftp_client.stat(f'{crypto_base}/{configtx_filename}')
-            ftp_client.stat(f'{crypto_base}/{filename}')
+            ftp_client.stat(f'{crypto_base}/{file_name}')
             print("File exists.")
             break
         except IOError:
@@ -205,23 +203,11 @@ def generate_order(order_id, order_information, fabric_name, channel_id, peer_gr
     stdin, stdout, stderr = ssh.exec_command(f'python3 {crypto_base}/node_build.py --func_name init_channel_artifacts {fabric_name} {channel_id} "{crypto_base}" {peer_group_ids} ')
     stdout.channel.recv_exit_status()
     print(stderr.readlines())
-    stdin, stdout, stderr = ssh.exec_command(f'docker-compose -f {crypto_base}/{filename} up -d')
+    stdin, stdout, stderr = ssh.exec_command(f'docker-compose -f {crypto_base}/{file_name} up -d')
     stdout.channel.recv_exit_status()
     print(stderr.readlines())
     time.sleep(4)
     ssh.close()
-
-
-def generate_configtx(groups: dict, nodes: dict, orderers: dict, fabric_name: str, crypto_base: str):
-    configtx = ConfigTXYamlGenerator(fabric_name, crypto_base)
-    # 读取yaml文件
-    # 生成groups、nodes、orderers
-    # 输出至configtx.yaml文件
-    # 返回文件名称
-    return configtx.input_from("./template/configtx.yaml") \
-        .generate(groups, nodes, orderers) \
-        .output_to(f"configtx.yaml") \
-        .get_filename()
 
 
 def parse_json(network_topology_json):
@@ -252,8 +238,8 @@ def parse_json(network_topology_json):
 
             for node in network_topology_json['nodes']:
                 if node['key'] == group['nodes']['ca']:
-                    generate_ca(group['nodes']['ca'], node, blockchain['name'], target_host, crypto_path)
-        print("成功生成ca证书")
+                    start_ca(group['nodes']['ca'], node, blockchain['name'], target_host, crypto_path)
+        print("成功启动ca节点")
 
         # 生成每个组织的msp
         for group in network_topology_json['groups']:
@@ -261,7 +247,7 @@ def parse_json(network_topology_json):
                 for order_id in group ['nodes']['orderer']:
                     for node in  network_topology_json['nodes']:
                         if node['key'] == order_id:
-                            generate_order_msp(order_id, node, order_ca_port, crypto_path)
+                            start_order_msp(order_id, node, order_ca_port, crypto_path)
 
         # 对每个peer节点
         for org_id in peer_group_ids:
@@ -286,25 +272,24 @@ def parse_json(network_topology_json):
             for peer_id in peer_ids:
                 for node in network_topology_json['nodes']:
                     if peer_id == node['key']:
-                        generate_peer(peer_id, node, order_group_id, blockchain['name'], target_host, peer_ca_port, crypto_path)
+                        start_peer(peer_id, node, order_group_id, blockchain['name'], target_host, peer_ca_port, crypto_path)
         orderers = dict()
-        print("成功生成peer")
+        print("成功启动peer节点")
 
         for node in network_topology_json["nodes"]:
             if "orderer" in node["type"]:
                 orderers[node['key']] = node
 
-        # 生成configtx文件
-        configtx_filename = generate_configtx(network_topology_json["groups"], network_topology_json["nodes"], orderers, blockchain["name"], crypto_path)
-        print("成功生成configtx")
+        # 获取configtx文件
+        configtx_filename = 'configtx.yaml'
 
         for group in network_topology_json['groups']:
             if group['key'] == order_group_id:
                 for order_id in group['nodes']['orderer']:
                     for node in network_topology_json['nodes']:
                         if node['key'] == order_id:
-                            generate_order(order_id, node, blockchain['name'], blockchain['channels'][0], peer_group_ids, configtx_filename, crypto_path)
-        print("成功生成order")
+                            start_order(order_id, node, blockchain['name'], blockchain['channels'][0], peer_group_ids, configtx_filename, crypto_path)
+        print("成功启动orderer节点")
 
 
 if __name__ == '__main__':
@@ -312,4 +297,4 @@ if __name__ == '__main__':
     with open(json_file) as js:
         network_json = json.load(js)
     parse_json(network_json)
-    print('ok')
+    print('该模块运行完毕')
