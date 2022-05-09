@@ -149,7 +149,7 @@ func GetNetworkOfFabric() string {
 		panic(err)
 	}
 
-	ID := GetDockerContainerID("/peer0.org1.example.com")
+	ID := GetDockerContainerID("/peer0.org1.test.com")
 	CJSON, err := cli.ContainerInspect(ctx, ID)
 	fmt.Println(CJSON.NetworkSettings.Networks)
 	for key, value := range CJSON.NetworkSettings.Networks {
