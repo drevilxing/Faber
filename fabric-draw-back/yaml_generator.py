@@ -38,15 +38,14 @@ class ConfigTXYamlGenerator:
                 Organization["OrdererEndpoints"] = group["nodes"]["orderer"]
             else:
                 Organization["Policies"] = self.configtx["Organizations"][1]["Policies"]
-                Organization["AnchorPeers"] = []
-
-                for url in group["nodes"]["anchor_peers"]:
-                    for node in nodes:
-                        if node['key'] == url:
-                            Organization["AnchorPeers"].append({
-                                "Host": url,
-                                "Port": int(node["address"]["fabric_port"])
-                            })
+            Organization["AnchorPeers"] = []
+            for url in group["nodes"]["anchor_peers"]:
+                for node in nodes:
+                    if node['key'] == url:
+                        Organization["AnchorPeers"].append({
+                            "Host": url,
+                            "Port": int(node["address"]["fabric_port"])
+                        })
             for Policie in Organization["Policies"]:
                 Rule = Organization["Policies"][Policie]["Rule"]
                 Organization["Policies"][Policie]["Rule"] = re.sub("Or\S+MSP", name, Rule)
@@ -253,16 +252,16 @@ def parse_json(network_topology_json):
                 for node in network_topology_json['nodes']:
                     if node['key'] == group['nodes']['ca']:
                         target_host = node['address']['host']
-            else:
+            #else:
                 # 添加peer节点
-                peer_group_ids.append(group['key'])
+                #peer_group_ids.append(group['key'])
+            peer_group_ids.append(group['key'])
             # 生成ca证书
 
             for node in network_topology_json['nodes']:
                 if node['key'] == group['nodes']['ca']:
                     generate_ca(group['nodes']['ca'], node, blockchain['name'], target_host, crypto_path)
         print("成功生成ca配置文件")
-
         # 对每个peer节点
         for org_id in peer_group_ids:
             # 获取peer结点的信息

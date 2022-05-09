@@ -3,7 +3,6 @@ import paramiko
 import time
 import os
 import stat
-from yaml_generator import CAYamlGenerator, OrderYamlGenerator, PeerYamlGenerator, ConfigTXYamlGenerator
 
 
 # 递归获取文件
@@ -231,9 +230,9 @@ def parse_json(network_topology_json):
                 for node in network_topology_json['nodes']:
                     if node['key'] == group['nodes']['ca']:
                         target_host = node['address']['host']
-            else:
+            #else:
                 # 添加peer节点
-                peer_group_ids.append(group['key'])
+            peer_group_ids.append(group['key'])
             # 生成ca证书
 
             for node in network_topology_json['nodes']:

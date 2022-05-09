@@ -10,10 +10,18 @@
                     "orderer1.orderer.test.com",
                     "orderer2.orderer.test.com"
                 ],
-                "leader_peers": [],
-                "anchor_peers": [],
-                "committing_peers": [],
-                "endorsing_peers": []
+                "leader_peers": [
+                    "peer0.orderer.test.com"
+                ],
+                "anchor_peers": [
+                    "peer0.orderer.test.com"
+                ],
+                "committing_peers": [
+                    "peer0.orderer.test.com"
+                ],
+                "endorsing_peers": [
+                    "peer0.orderer.test.com"
+                ]
             },
             "blockchains": "fabric-1",
             "channel": [
@@ -105,6 +113,24 @@
             "bootstrap": [],
             "type": [
                 "ca"
+            ]
+        },
+        {
+            "key": "peer0.orderer.test.com",
+            "org": "orderer.test.com",
+            "address": {
+                "host": "172.20.10.3",
+                "ssh_port": "22",
+                "fabric_port": "10051"
+            },
+            "bootstrap": [
+                "127.0.0.1:7051"
+            ],
+            "type": [
+                "leader_peer",
+                "anchor_peer",
+                "committing_peer",
+                "endorsing_peer"
             ]
         },
         {
