@@ -78,7 +78,7 @@ func BuildEnvironment(s string) {
 	c.Run("docker pull hyperledger/fabric-ca:1.4.7")
 	c.Run("docker pull hyperledger/fabric-peer:2.2.0")
 	c.Run("docker pull hyperledger/fabric-orderer:2.2.0")
-	// 下载二进制文件
+	//
 	c.Run("mkdir -p go/src/github.com/hyperledger && cd go/src/github.com/hyperledger;git clone https://gitee.com/planewalker/fabric-ca.git")
 	if s == "peer" {
 		ledger, _ := c.Run("cd fabric-ca;make fabric-ca-client;cp bin/fabric-ca-client /usr/local/bin;chmod 775 /usr/local/bin/fabric-ca-client")
