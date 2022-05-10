@@ -3,7 +3,7 @@
         {
             "key": "orderer.test.com",
             "ca": "ca.orderer.test.com",
-            "node": {
+            "nodes": {
                 "ca": "ca.orderer.test.com",
                 "orderer": [
                     "orderer0.orderer.test.com",
@@ -23,7 +23,7 @@
         {
             "key": "org0.test.com",
             "ca": "ca.org0.test.com",
-            "node": {
+            "nodes": {
                 "ca": "ca.org0.test.com",
                 "orderer": [],
                 "leader_peers": [
@@ -47,7 +47,7 @@
         {
             "key": "org1.test.com",
             "ca": "ca.org1.test.com",
-            "node": {
+            "nodes": {
                 "ca": "ca.org1.test.com",
                 "orderer": [],
                 "leader_peers": [
@@ -71,7 +71,7 @@
         {
             "key": "org2.test.com",
             "ca": "ca.org2.test.com",
-            "node": {
+            "nodes": {
                 "ca": "ca.org2.test.com",
                 "orderer": [],
                 "leader_peers": [
@@ -98,7 +98,7 @@
             "key": "ca.orderer.test.com",
             "org": "orderer.test.com",
             "address": {
-                "host": "172.20.10.3",
+                "host": " 172.29.104.36",
                 "ssh_port": "22",
                 "fabric_port": "7054"
             },
@@ -111,7 +111,7 @@
             "key": "orderer0.orderer.test.com",
             "org": "orderer.test.com",
             "address": {
-                "host": "172.20.10.3",
+                "host": " 172.29.104.36",
                 "ssh_port": "22",
                 "fabric_port": "7050"
             },
@@ -124,7 +124,7 @@
             "key": "orderer1.orderer.test.com",
             "org": "orderer.test.com",
             "address": {
-                "host": "172.20.10.3",
+                "host": " 172.29.104.36",
                 "ssh_port": "22",
                 "fabric_port": "8054"
             },
@@ -137,7 +137,7 @@
             "key": "orderer2.orderer.test.com",
             "org": "orderer.test.com",
             "address": {
-                "host": "172.20.10.3",
+                "host": " 172.29.104.36",
                 "ssh_port": "22",
                 "fabric_port": "9050"
             },
@@ -150,7 +150,7 @@
             "key": "ca.org0.test.com",
             "org": "org0.test.com",
             "address": {
-                "host": "172.20.10.3",
+                "host": " 172.29.104.36",
                 "ssh_port": "22",
                 "fabric_port": "9054"
             },
@@ -163,7 +163,7 @@
             "key": "peer0.org0.test.com",
             "org": "org0.test.com",
             "address": {
-                "host": "172.20.10.3",
+                "host": " 172.29.104.36",
                 "ssh_port": "22",
                 "fabric_port": "8051"
             },
@@ -181,7 +181,7 @@
             "key": "ca.org1.test.com",
             "org": "org1.test.com",
             "address": {
-                "host": "172.20.10.3",
+                "host": " 172.29.104.36",
                 "ssh_port": "22",
                 "fabric_port": "10054"
             },
@@ -194,7 +194,7 @@
             "key": "peer0.org1.test.com",
             "org": "org1.test.com",
             "address": {
-                "host": "172.20.10.3",
+                "host": " 172.29.104.36",
                 "ssh_port": "22",
                 "fabric_port": "11051"
             },
@@ -212,7 +212,7 @@
             "key": "ca.org2.test.com",
             "org": "org2.test.com",
             "address": {
-                "host": "172.20.10.3",
+                "host": " 172.29.104.36",
                 "ssh_port": "22",
                 "fabric_port": "12054"
             },
@@ -225,7 +225,7 @@
             "key": "peer0.org2.test.com",
             "org": "org2.test.com",
             "address": {
-                "host": "172.20.10.3",
+                "host": " 172.29.104.36",
                 "ssh_port": "22",
                 "fabric_port": "13051"
             },
