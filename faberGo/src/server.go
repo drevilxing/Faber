@@ -26,6 +26,10 @@ func StartingBasicServer() {
 						Pattern: "/delete",
 						Handler: handlerNetworkDelete,
 					},
+					{
+						Pattern: "/open",
+						Handler: handlerNetworkOpen,
+					},
 				},
 			},
 			{
@@ -70,14 +74,6 @@ func StartingBasicServer() {
 				Name: "environment",
 				Mask: "/environment",
 				Methods: []https.Method{
-					//https.Method{
-					//	Pattern: "/install",
-					//	Handler: nil,
-					//},
-					//https.Method{
-					//	Pattern: "/deploy",
-					//	Handler: nil,
-					//},
 					{
 						Pattern: "/config/save",
 						Handler: handlerConfigSave,
@@ -85,6 +81,18 @@ func StartingBasicServer() {
 					{
 						Pattern: "/config/fetch",
 						Handler: handlerConfigFetch,
+					},
+					{
+						Pattern: "/config/generate",
+						Handler: handlerConfigGenerate,
+					},
+					{
+						Pattern: "/install",
+						Handler: handlerInstall,
+					},
+					{
+						Pattern: "/deploy",
+						Handler: handlerDeploy,
 					},
 				},
 			},
