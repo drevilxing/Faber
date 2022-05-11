@@ -1,1 +1,253 @@
-{"key":"faber","groups":[{"key":"orderer.test.com","ca":"ca.orderer.test.com","node":{"ca":"ca.orderer.test.com","orderer":["orderer0.orderer.test.com","orderer1.orderer.test.com","orderer2.orderer.test.com"],"leader_peers":[],"anchor_peers":[],"committing_peers":[],"endorsing_peers":[]},"blockchains":"fabric-1","channel":["channel-1"]},{"key":"org0.test.com","ca":"ca.org0.test.com","node":{"ca":"ca.org0.test.com","orderer":[],"leader_peers":["peer0.org0.test.com"],"anchor_peers":["peer0.org0.test.com"],"committing_peers":["peer0.org0.test.com"],"endorsing_peers":["peer0.org0.test.com"]},"blockchains":"fabric-1","channel":["channel-1"]},{"key":"org1.test.com","ca":"ca.org1.test.com","node":{"ca":"ca.org1.test.com","orderer":[],"leader_peers":["peer0.org1.test.com"],"anchor_peers":["peer0.org1.test.com"],"committing_peers":["peer0.org1.test.com"],"endorsing_peers":["peer0.org1.test.com"]},"blockchains":"fabric-1","channel":["channel-1"]},{"key":"org2.test.com","ca":"ca.org2.test.com","node":{"ca":"ca.org2.test.com","orderer":[],"leader_peers":["peer0.org2.test.com"],"anchor_peers":["peer0.org2.test.com"],"committing_peers":["peer0.org2.test.com"],"endorsing_peers":["peer0.org2.test.com"]},"blockchains":"fabric-1","channel":["channel-1"]}],"nodes":[{"key":"ca.orderer.test.com","org":"orderer.test.com","address":{"host":"172.20.10.3","ssh_port":"22","fabric_port":"7054"},"bootstrap":[],"type":["ca"]},{"key":"orderer0.orderer.test.com","org":"orderer.test.com","address":{"host":"172.20.10.3","ssh_port":"22","fabric_port":"7050"},"bootstrap":[],"type":["orderer"]},{"key":"orderer1.orderer.test.com","org":"orderer.test.com","address":{"host":"172.20.10.3","ssh_port":"22","fabric_port":"8054"},"bootstrap":[],"type":["orderer"]},{"key":"orderer2.orderer.test.com","org":"orderer.test.com","address":{"host":"172.20.10.3","ssh_port":"22","fabric_port":"9050"},"bootstrap":[],"type":["orderer"]},{"key":"ca.org0.test.com","org":"org0.test.com","address":{"host":"172.20.10.3","ssh_port":"22","fabric_port":"9054"},"bootstrap":[],"type":["ca"]},{"key":"peer0.org0.test.com","org":"org0.test.com","address":{"host":"172.20.10.3","ssh_port":"22","fabric_port":"8051"},"bootstrap":["127.0.0.1:7051"],"type":["leader_peer","anchor_peer","committing_peer","endorsing_peer"]},{"key":"ca.org1.test.com","org":"org1.test.com","address":{"host":"172.20.10.3","ssh_port":"22","fabric_port":"10054"},"bootstrap":[],"type":["ca"]},{"key":"peer0.org1.test.com","org":"org1.test.com","address":{"host":"172.20.10.3","ssh_port":"22","fabric_port":"11051"},"bootstrap":["127.0.0.1:7051"],"type":["leader_peer","anchor_peer","committing_peer","endorsing_peer"]},{"key":"ca.org2.test.com","org":"org2.test.com","address":{"host":"172.20.10.3","ssh_port":"22","fabric_port":"12054"},"bootstrap":[],"type":["ca"]},{"key":"peer0.org2.test.com","org":"org2.test.com","address":{"host":"172.20.10.3","ssh_port":"22","fabric_port":"13051"},"bootstrap":["127.0.0.1:7051"],"type":["leader_peer","anchor_peer","committing_peer","endorsing_peer"]}],"blockchains":[{"key":"fabric-1","name":"FabricDraw","channels":["channel-1"]}]}
+{
+    "key": "faber",
+    "groups": [
+        {
+            "key": "orderer.test.com",
+            "ca": "ca.orderer.test.com",
+            "node": {
+                "ca": "ca.orderer.test.com",
+                "orderer": [
+                    "orderer0.orderer.test.com",
+                    "orderer1.orderer.test.com",
+                    "orderer2.orderer.test.com"
+                ],
+                "leader_peers": [],
+                "anchor_peers": [],
+                "committing_peers": [],
+                "endorsing_peers": []
+            },
+            "blockchains": "fabric-1",
+            "channel": [
+                "channel-1"
+            ]
+        },
+        {
+            "key": "org0.test.com",
+            "ca": "ca.org0.test.com",
+            "node": {
+                "ca": "ca.org0.test.com",
+                "orderer": [],
+                "leader_peers": [
+                    "peer0.org0.test.com"
+                ],
+                "anchor_peers": [
+                    "peer0.org0.test.com"
+                ],
+                "committing_peers": [
+                    "peer0.org0.test.com"
+                ],
+                "endorsing_peers": [
+                    "peer0.org0.test.com"
+                ]
+            },
+            "blockchains": "fabric-1",
+            "channel": [
+                "channel-1"
+            ]
+        },
+        {
+            "key": "org1.test.com",
+            "ca": "ca.org1.test.com",
+            "node": {
+                "ca": "ca.org1.test.com",
+                "orderer": [],
+                "leader_peers": [
+                    "peer0.org1.test.com"
+                ],
+                "anchor_peers": [
+                    "peer0.org1.test.com"
+                ],
+                "committing_peers": [
+                    "peer0.org1.test.com"
+                ],
+                "endorsing_peers": [
+                    "peer0.org1.test.com"
+                ]
+            },
+            "blockchains": "fabric-1",
+            "channel": [
+                "channel-1"
+            ]
+        },
+        {
+            "key": "org2.test.com",
+            "ca": "ca.org2.test.com",
+            "node": {
+                "ca": "ca.org2.test.com",
+                "orderer": [],
+                "leader_peers": [
+                    "peer0.org2.test.com"
+                ],
+                "anchor_peers": [
+                    "peer0.org2.test.com"
+                ],
+                "committing_peers": [
+                    "peer0.org2.test.com"
+                ],
+                "endorsing_peers": [
+                    "peer0.org2.test.com"
+                ]
+            },
+            "blockchains": "fabric-1",
+            "channel": [
+                "channel-1"
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "key": "ca.orderer.test.com",
+            "org": "orderer.test.com",
+            "address": {
+                "host": "172.20.10.3",
+                "ssh_port": "22",
+                "fabric_port": "7054"
+            },
+            "bootstrap": [],
+            "type": [
+                "ca"
+            ]
+        },
+        {
+            "key": "orderer0.orderer.test.com",
+            "org": "orderer.test.com",
+            "address": {
+                "host": "172.20.10.3",
+                "ssh_port": "22",
+                "fabric_port": "7050"
+            },
+            "bootstrap": [],
+            "type": [
+                "orderer"
+            ]
+        },
+        {
+            "key": "orderer1.orderer.test.com",
+            "org": "orderer.test.com",
+            "address": {
+                "host": "172.20.10.3",
+                "ssh_port": "22",
+                "fabric_port": "8054"
+            },
+            "bootstrap": [],
+            "type": [
+                "orderer"
+            ]
+        },
+        {
+            "key": "orderer2.orderer.test.com",
+            "org": "orderer.test.com",
+            "address": {
+                "host": "172.20.10.3",
+                "ssh_port": "22",
+                "fabric_port": "9050"
+            },
+            "bootstrap": [],
+            "type": [
+                "orderer"
+            ]
+        },
+        {
+            "key": "ca.org0.test.com",
+            "org": "org0.test.com",
+            "address": {
+                "host": "172.20.10.3",
+                "ssh_port": "22",
+                "fabric_port": "9054"
+            },
+            "bootstrap": [],
+            "type": [
+                "ca"
+            ]
+        },
+        {
+            "key": "peer0.org0.test.com",
+            "org": "org0.test.com",
+            "address": {
+                "host": "172.20.10.3",
+                "ssh_port": "22",
+                "fabric_port": "8051"
+            },
+            "bootstrap": [
+                "127.0.0.1:7051"
+            ],
+            "type": [
+                "leader_peer",
+                "anchor_peer",
+                "committing_peer",
+                "endorsing_peer"
+            ]
+        },
+        {
+            "key": "ca.org1.test.com",
+            "org": "org1.test.com",
+            "address": {
+                "host": "172.20.10.3",
+                "ssh_port": "22",
+                "fabric_port": "10054"
+            },
+            "bootstrap": [],
+            "type": [
+                "ca"
+            ]
+        },
+        {
+            "key": "peer0.org1.test.com",
+            "org": "org1.test.com",
+            "address": {
+                "host": "172.20.10.3",
+                "ssh_port": "22",
+                "fabric_port": "11051"
+            },
+            "bootstrap": [
+                "127.0.0.1:7051"
+            ],
+            "type": [
+                "leader_peer",
+                "anchor_peer",
+                "committing_peer",
+                "endorsing_peer"
+            ]
+        },
+        {
+            "key": "ca.org2.test.com",
+            "org": "org2.test.com",
+            "address": {
+                "host": "172.20.10.3",
+                "ssh_port": "22",
+                "fabric_port": "12054"
+            },
+            "bootstrap": [],
+            "type": [
+                "ca"
+            ]
+        },
+        {
+            "key": "peer0.org2.test.com",
+            "org": "org2.test.com",
+            "address": {
+                "host": "172.20.10.3",
+                "ssh_port": "22",
+                "fabric_port": "13051"
+            },
+            "bootstrap": [
+                "127.0.0.1:7051"
+            ],
+            "type": [
+                "leader_peer",
+                "anchor_peer",
+                "committing_peer",
+                "endorsing_peer"
+            ]
+        }
+    ],
+    "blockchains": [
+        {
+            "key": "fabric-1",
+            "name": "FabricDraw",
+            "channels": [
+                "channel-1"
+            ]
+        }
+    ]
+}

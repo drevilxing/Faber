@@ -118,3 +118,41 @@ func handlerNetworkDelete(writer http.ResponseWriter, request *http.Request) {
 	}
 	https.SendResponseOK(writer, request)
 }
+
+func handlerNetworkOpen(writer http.ResponseWriter, request *http.Request) {
+	w, r, err := https.Dealer{
+		Header:   defaultHeaderNetwork,
+		Handlers: nil,
+	}.Deal(writer, request)
+	if nil != err {
+		https.SendResponseInternalError(w, r, err, https.ResponseFalse)
+		return
+	}
+	postRequest := https.DealPostRequest(w, r, []string{
+		"name",
+	}...)
+	if nil != postRequest.Err {
+		return
+	}
+
+	// 检查
+	for _, element := range *configs {
+		if element.Key == r.PostFormValue("name") {
+			data, errIn := json.Marshal(*element)
+
+			if nil != errIn {
+				https.SendResponseInternalError(w, r, err, https.ResponseFalse)
+				return
+			}
+			currentConfig = element
+			https.SendJsonResponse(w, r, https.JsonResponse{
+				Status:  https.ResponseTrue,
+				Message: data,
+				Code:    http.StatusOK,
+			})
+			return
+		}
+	}
+	https.SendResponseInternalError(w, r, errors.New("No Key named "+r.PostFormValue("name")), https.ResponseFalse)
+	return
+}

@@ -1,0 +1,36 @@
+OrdererOrg:
+- Name: Orderer
+  Domain: test.com
+  EnableNodeOUs: true
+  Specs:
+  - Hostname: orderer
+    SANS:
+    - localhost
+PeerOrg:
+- Name: org0
+  Domain: org0.test.com
+  EnableNodeOUs: true
+  Template:
+    Count: 1
+    SANS:
+    - localhost
+  Users:
+    Count: 1
+- Name: org1
+  Domain: org1.test.com
+  EnableNodeOUs: true
+  Template:
+    Count: 1
+    SANS:
+    - localhost
+  Users:
+    Count: 1
+- Name: org2
+  Domain: org2.test.com
+  EnableNodeOUs: true
+  Template:
+    Count: 1
+    SANS:
+    - localhost
+  Users:
+    Count: 1
