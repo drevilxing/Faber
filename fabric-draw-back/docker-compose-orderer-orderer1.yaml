@@ -23,6 +23,8 @@ services:
     - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
     - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
     - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    - ORDERER_OPERATIONS_LISTENADDRESS=orderer1.orderer.test.com:8443
+    - ORDERER_METRICS_PROVIDER=prometheus
     image: hyperledger/fabric-orderer:2.2.0
     networks:
     - net
