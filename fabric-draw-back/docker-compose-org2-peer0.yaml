@@ -23,6 +23,8 @@ services:
     - CORE_PEER_GOSSIP_BOOTSTRAP=127.0.0.1:7051
     - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org2.test.com:13051
     - CORE_PEER_LOCALMSPID=Org2MSP
+    - CORE_OPERATIONS_LISTENADDRESS=peer0.org2.test.com:9443
+    - CORE_METRICS_PROVIDER=prometheus
     image: hyperledger/fabric-peer:2.2.0
     networks:
     - net

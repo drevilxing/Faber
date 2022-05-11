@@ -148,6 +148,7 @@ class OrderYamlGenerator(YamlGenerator):
         order_information['container_name'] = node_id
         order_information['environment'][2] = f'ORDERER_GENERAL_LISTENPORT={fabric_port}'
         order_information['environment'][5] = f'ORDERER_GENERAL_LOCALMSPID={org_name.capitalize()}MSP'
+        order_information['environment'][16] = f'ORDERER_OPERATIONS_LISTENADDRESS={node_id}:8443'
         order_information['volumes'][
             1] = f'{crypto_path}/organizations/orderer.test.com/peers/{node_id}/msp:/var/hyperledger/orderer/msp'
         order_information['volumes'][
@@ -180,6 +181,7 @@ class PeerYamlGenerator(YamlGenerator):
         peer_information['environment'][11] = f'CORE_PEER_CHAINCODEADDRESS={node_id}:7052'
         peer_information['environment'][14] = f'CORE_PEER_GOSSIP_EXTERNALENDPOINT={node_id}:{fabric_port}'
         peer_information['environment'][15] = f'CORE_PEER_LOCALMSPID={org_name.capitalize()}MSP'
+        peer_information['environment'][16] = f'CORE_OPERATIONS_LISTENADDRESS={node_id}:9443'
         peer_information['volumes'][
             1] = f'{crypto_path}/organizations/{org_name}.{domain}/peers/{node_id}/msp:/etc/hyperledger/fabric/msp'
         peer_information['volumes'][
