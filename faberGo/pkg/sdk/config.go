@@ -11,16 +11,16 @@ import (
 )
 
 type GoSDK struct {
-	Name           string                   `json:"name"`
-	Description    string                   `json:"description"`
-	Version        string                   `json:"version"`
-	Client         *client.Config           `json:"client"`
-	Channels       *[]*target.ChannelConfig `json:"channels"`
-	Organizations  *[]*target.OrgConfig     `json:"organizations"`
-	Orderers       *[]*target.OrdererConfig `json:"orderers"`
-	Peers          *[]*target.PeerConfig    `json:"peers"`
-	CA             *[]*target.CAConfig      `json:"certificateAuthorities"`
-	EntityMatchers *target.EntityMatcher    `json:"entityMatchers"`
+	Name           string                   `json:"name" yaml:"name"`
+	Description    string                   `json:"description" yaml:"description"`
+	Version        string                   `json:"version" yaml:"version"`
+	Client         *client.Config           `json:"client" yaml:"client"`
+	Channels       *[]*target.ChannelConfig `json:"channels" yaml:"channels"`
+	Organizations  *[]*target.OrgConfig     `json:"organizations" yaml:"organizations"`
+	Orderers       *[]*target.OrdererConfig `json:"orderers" yaml:"orderers"`
+	Peers          *[]*target.PeerConfig    `json:"peers" yaml:"peers"`
+	CA             *[]*target.CAConfig      `json:"certificateAuthorities" yaml:"certificateAuthorities"`
+	EntityMatchers *target.EntityMatcher    `json:"entityMatchers" yaml:"entityMatchers"`
 	host           *[]string
 }
 

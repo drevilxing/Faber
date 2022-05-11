@@ -41,19 +41,19 @@ type PeerOrg struct {
 // Cryptogen Config.
 
 type CryptogenConfig struct {
-	OrdererOrg *[]*OrdererOrg `yaml:"OrdererOrg"`
-	PeerOrg    *[]*PeerOrg    `yaml:"PeerOrg"`
+	OrdererOrgs *[]*OrdererOrg `yaml:"OrdererOrgs"`
+	PeerOrgs    *[]*PeerOrg    `yaml:"PeerOrgs"`
 }
 
 func GenerateEmptyCryptogenConfig() *CryptogenConfig {
 	return &CryptogenConfig{
-		OrdererOrg: &[]*OrdererOrg{},
-		PeerOrg:    &[]*PeerOrg{},
+		OrdererOrgs: &[]*OrdererOrg{},
+		PeerOrgs:    &[]*PeerOrg{},
 	}
 }
 
 func (that *CryptogenConfig) AddOrdererOrg(name, domain, hostname string, sans []string) {
-	*that.OrdererOrg = append(*that.OrdererOrg, &OrdererOrg{
+	*that.OrdererOrgs = append(*that.OrdererOrgs, &OrdererOrg{
 		Name:          name,
 		Domain:        domain,
 		EnableNodeOUs: true,
@@ -67,7 +67,7 @@ func (that *CryptogenConfig) AddOrdererOrg(name, domain, hostname string, sans [
 }
 
 func (that *CryptogenConfig) AddPeerOrg(name, domain string, sans []string, users int64) {
-	*that.PeerOrg = append(*that.PeerOrg, &PeerOrg{
+	*that.PeerOrgs = append(*that.PeerOrgs, &PeerOrg{
 		Name:          name,
 		Domain:        domain,
 		EnableNodeOUs: true,

@@ -3,22 +3,22 @@ package target
 import "fmt"
 
 type ChannelPeer struct {
-	Key            string `json:"key"`
-	EndorsingPeer  bool   `json:"endorsingPeer"`
-	ChaincodeQuery bool   `json:"chaincodeQuery"`
-	LedgerQuery    bool   `json:"ledgerQuery"`
-	EventSource    bool   `json:"eventSource"`
+	Key            string `json:"key" yaml:"key"`
+	EndorsingPeer  bool   `json:"endorsingPeer" yaml:"endorsingPeer"`
+	ChaincodeQuery bool   `json:"chaincodeQuery" yaml:"chaincodeQuery"`
+	LedgerQuery    bool   `json:"ledgerQuery" yaml:"ledgerQuery"`
+	EventSource    bool   `json:"eventSource" yaml:"eventSource"`
 }
 
 type RetryOpts struct {
-	Attempts       int64  `json:"attempts"`
-	InitialBackoff string `json:"initialBackoff"`
-	MaxBackoff     string `json:"maxBackoff"`
-	BackoffFactor  string `json:"backoffFactor"`
+	Attempts       int64  `json:"attempts" yaml:"attempts"`
+	InitialBackoff string `json:"initialBackoff" yaml:"initialBackoff"`
+	MaxBackoff     string `json:"maxBackoff" yaml:"maxBackoff"`
+	BackoffFactor  string `json:"backoffFactor" yaml:"backoffFactor"`
 }
 
 type QueryChannelConfig struct {
-	MinResponses int64      `json:"minResponses"`
+	MinResponses int64      `json:"minResponses" yaml:"minResponses"`
 	MaxTargets   int64      `json:"maxTargets"`
 	RetryOpts    *RetryOpts `json:"retryOpts"`
 }
@@ -43,12 +43,12 @@ type ChannelEventService struct {
 }
 
 type ChannelConfig struct {
-	Key          string               `json:"key"`
-	Orderers     *[]string            `json:"orderers"`
-	Peers        *[]*ChannelPeer      `json:"peers"`
-	Polices      *ChannelPolices      `json:"polices"`
-	Selection    *ChannelSelection    `json:"selection"`
-	EventService *ChannelEventService `json:"eventService"`
+	Key          string               `json:"key" yaml:"key"`
+	Orderers     *[]string            `json:"orderers" yaml:"orderers"`
+	Peers        *[]*ChannelPeer      `json:"peers" yaml:"peers"`
+	Polices      *ChannelPolices      `json:"polices" yaml:"polices"`
+	Selection    *ChannelSelection    `json:"selection" yaml:"selection"`
+	EventService *ChannelEventService `json:"eventService" yaml:"eventService"`
 }
 
 func GenerateDefaultChannel(name string) *ChannelConfig {
