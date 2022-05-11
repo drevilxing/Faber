@@ -1,18 +1,18 @@
 package target
 
 type Matcher struct {
-	Pattern                             string `json:"pattern"`
-	UrlSubstitutionExp                  string `json:"urlSubstitutionExp"`
-	SslTargetOverrideUrlSubstitutionExp string `json:"sslTargetOverrideUrlSubstitutionExp"`
-	MappedHost                          string `json:"mappedHost"`
-	IgnoreEndpoint                      bool   `json:"ignoreEndpoint"`
+	Pattern                             string `json:"pattern" yaml:"pattern"`
+	UrlSubstitutionExp                  string `json:"urlSubstitutionExp" yaml:"urlSubstitutionExp"`
+	SslTargetOverrideUrlSubstitutionExp string `json:"sslTargetOverrideUrlSubstitutionExp" yaml:"sslTargetOverrideUrlSubstitutionExp"`
+	MappedHost                          string `json:"mappedHost" yaml:"mappedHost"`
+	IgnoreEndpoint                      bool   `json:"ignoreEndpoint" yaml:"ignoreEndpoint"`
 }
 
 type EntityMatcher struct {
-	Peers                *[]*Matcher `json:"peers"`
-	Orderer              *[]*Matcher `json:"orderer"`
-	CertificateAuthority *[]*Matcher `json:"certificateAuthority"`
-	Channel              *[]*Matcher `json:"channel"`
+	Peers                *[]*Matcher `json:"peers" yaml:"peers"`
+	Orderer              *[]*Matcher `json:"orderer" yaml:"orderer"`
+	CertificateAuthority *[]*Matcher `json:"certificateAuthority" yaml:"certificateAuthority"`
+	Channel              *[]*Matcher `json:"channel" yaml:"channel"`
 }
 
 func GenerateDefaultEntityMatcher() *EntityMatcher {

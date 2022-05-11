@@ -1,7 +1,5 @@
 package target
 
-import "fmt"
-
 type ChannelPeer struct {
 	Key            string `json:"key" yaml:"key"`
 	EndorsingPeer  bool   `json:"endorsingPeer" yaml:"endorsingPeer"`
@@ -19,36 +17,36 @@ type RetryOpts struct {
 
 type QueryChannelConfig struct {
 	MinResponses int64      `json:"minResponses" yaml:"minResponses"`
-	MaxTargets   int64      `json:"maxTargets"`
-	RetryOpts    *RetryOpts `json:"retryOpts"`
+	MaxTargets   int64      `json:"maxTargets" yaml:"maxTargets"`
+	RetryOpts    *RetryOpts `json:"retryOpts" yaml:"retryOpts"`
 }
 
 type ChannelPolices struct {
-	QueryChannelConfig *QueryChannelConfig `json:"queryChannelConfig"`
+	QueryChannelConfig *QueryChannelConfig `json:"queryChannelConfig" yaml:"queryChannelConfig"`
 }
 
 type ChannelSelection struct {
-	SortingStrategy         string `json:"SortingStrategy"`
-	Balancer                string `json:"Balancer"`
-	BlockHeightLagThreshold int64  `json:"BlockHeightLagThreshold"`
+	SortingStrategy         string `json:"SortingStrategy" yaml:"sortingStrategy"`
+	Balancer                string `json:"Balancer" yaml:"balancer"`
+	BlockHeightLagThreshold int64  `json:"BlockHeightLagThreshold" yaml:"blockHeightLagThreshold"`
 }
 
 type ChannelEventService struct {
-	ResolverStrategy                 string `json:"resolverStrategy"`
-	MinBlockHeightResolverMode       string `json:"minBlockHeightResolverMode"`
-	BlockHeightLagThreshold          int64  `json:"blockHeightLagThreshold"`
-	ReconnectBlockHeightLagThreshold int64  `json:"reconnectBlockHeightLagThreshold"`
-	PeerMonitor                      string `json:"peerMonitor"`
-	PeerMonitorPeriod                string `json:"peerMonitorPeriod"`
+	ResolverStrategy                 string `json:"resolverStrategy" yaml:"resolverStrategy"`
+	MinBlockHeightResolverMode       string `json:"minBlockHeightResolverMode" yaml:"minBlockHeightResolverMode"`
+	BlockHeightLagThreshold          int64  `json:"blockHeightLagThreshold" yaml:"blockHeightLagThreshold"`
+	ReconnectBlockHeightLagThreshold int64  `json:"reconnectBlockHeightLagThreshold" yaml:"reconnectBlockHeightLagThreshold"`
+	PeerMonitor                      string `json:"peerMonitor" yaml:"peerMonitor"`
+	PeerMonitorPeriod                string `json:"peerMonitorPeriod" yaml:"peerMonitorPeriod"`
 }
 
 type ChannelConfig struct {
-	Key          string               `json:"key" yaml:"key"`
-	Orderers     *[]string            `json:"orderers" yaml:"orderers"`
-	Peers        *[]*ChannelPeer      `json:"peers" yaml:"peers"`
-	Polices      *ChannelPolices      `json:"polices" yaml:"polices"`
-	Selection    *ChannelSelection    `json:"selection" yaml:"selection"`
-	EventService *ChannelEventService `json:"eventService" yaml:"eventService"`
+	Key          string               `json:"key" yaml:"key" yaml:"key"`
+	Orderers     *[]string            `json:"orderers" yaml:"orderers" yaml:"orderers"`
+	Peers        *[]*ChannelPeer      `json:"peers" yaml:"peers" yaml:"peers"`
+	Polices      *ChannelPolices      `json:"polices" yaml:"polices" yaml:"polices"`
+	Selection    *ChannelSelection    `json:"selection" yaml:"selection" yaml:"selection"`
+	EventService *ChannelEventService `json:"eventService" yaml:"eventService" yaml:"eventService"`
 }
 
 func GenerateDefaultChannel(name string) *ChannelConfig {
@@ -115,7 +113,7 @@ func GenerateEndorsingPeer(key string) *ChannelPeer {
 //}
 
 func (that *ChannelConfig) AddPeer(peer *ChannelPeer) {
-	fmt.Println(*that.Peers)
+	//fmt.Println(*that.Peers)
 	for _, element := range *that.Peers {
 		if peer.Key == element.Key {
 			element.EndorsingPeer = element.EndorsingPeer || peer.EndorsingPeer

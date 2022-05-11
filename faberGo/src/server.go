@@ -98,4 +98,6 @@ func StartingBasicServer() {
 			},
 		},
 	}
+
+	server.Listen()
 }

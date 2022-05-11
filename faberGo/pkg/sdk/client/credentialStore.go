@@ -5,8 +5,8 @@ type CryptoStore struct {
 }
 
 type CredentialStore struct {
-	Path        string       `json:"path"`
-	CryptoStore *CryptoStore `json:"cryptoStore"`
+	Path        string       `json:"path" yaml:"path"`
+	CryptoStore *CryptoStore `json:"cryptoStore" yaml:"cryptoStore"`
 }
 
 func GenerateDefaultCredentialStore() *CredentialStore {

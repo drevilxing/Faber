@@ -6,7 +6,6 @@ import (
 	"faberGo/pkg/config"
 	"faberGo/pkg/sdk/client"
 	"faberGo/pkg/sdk/target"
-	"fmt"
 	"os"
 )
 
@@ -130,7 +129,7 @@ func GenerateGoSDK(name string, desc string, version string, org string, generat
 			orgPointer.AddPeer(peer)
 			// 添加到对应channel的peer信息
 			for _, channelElement := range *element.Channel {
-				fmt.Println(channelElement)
+				//fmt.Println(channelElement)
 				channelPointer, errChannelPointer := sdkConfig.FindChannel(channelElement)
 				if nil != errChannelPointer {
 					return nil

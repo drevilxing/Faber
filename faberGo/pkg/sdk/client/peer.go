@@ -1,13 +1,13 @@
 package client
 
 type PeerTimeoutDiscovery struct {
-	GreylistExpiry string `json:"greylistExpiry"`
+	GreylistExpiry string `json:"greylistExpiry" yaml:"greylistExpiry"`
 }
 
 type PeerTimeout struct {
-	Connection string                `json:"connection"`
-	Response   string                `json:"response"`
-	Discovery  *PeerTimeoutDiscovery `json:"discovery"`
+	Connection string                `json:"connection" yaml:"connection"`
+	Response   string                `json:"response" yaml:"response"`
+	Discovery  *PeerTimeoutDiscovery `json:"discovery" yaml:"discovery"`
 }
 
 type Peer struct {

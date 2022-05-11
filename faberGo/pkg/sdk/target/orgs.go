@@ -3,9 +3,9 @@ package target
 import "strings"
 
 type OrgConfig struct {
-	Key   string    `json:"key"`
-	MspId string    `json:"mspId"`
-	Peers *[]string `json:"peers"`
+	Key   string    `json:"key" yaml:"key"`
+	MspId string    `json:"mspId" yaml:"mspId"`
+	Peers *[]string `json:"peers" yaml:"peers"`
 }
 
 func GenerateDefaultOrgConfig(name string, mspId string) *OrgConfig {

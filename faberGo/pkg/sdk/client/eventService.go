@@ -4,13 +4,13 @@ const EventServiceTypeDeliver = "deliver"
 const EventServiceTypeEventHub = "eventhub"
 
 type EventServiceTimeout struct {
-	Connection           string `json:"connection"`
-	RegistrationResponse string `json:"registrationResponse"`
+	Connection           string `json:"connection" yaml:"connection"`
+	RegistrationResponse string `json:"registrationResponse" yaml:"registrationResponse"`
 }
 
 type EventService struct {
-	Method  string               `json:"type"`
-	Timeout *EventServiceTimeout `json:"timeout"`
+	Method  string               `json:"type" yaml:"method"`
+	Timeout *EventServiceTimeout `json:"timeout" yaml:"timeout"`
 }
 
 func GenerateDefaultEventService(method string) *EventService {

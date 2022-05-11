@@ -1,10 +1,10 @@
 package target
 
 type OrdererConfig struct {
-	Key         string       `json:"key"`
-	Url         string       `json:"url"`
-	GrpcOptions *GrpcOptions `json:"grpcOptions"`
-	TlsCACerts  *TlsCACerts  `json:"tlsCaCerts"`
+	Key         string       `json:"key" yaml:"key"`
+	Url         string       `json:"url" yaml:"url"`
+	GrpcOptions *GrpcOptions `json:"grpcOptions" yaml:"grpcOptions"`
+	TlsCACerts  *TlsCACerts  `json:"tlsCaCerts" yaml:"tlsCACerts"`
 }
 
 func GenerateDefaultOrdererConfig(key string, url string) *OrdererConfig {
