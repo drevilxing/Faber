@@ -16,5 +16,5 @@ func OrganizationCreateOrderer() {
 }
 
 func OrganizationCreate(commands *connect.Commands) {
-	commands.Append("cryptogen generate --config=/root/opt/cryptogen/crypto-config.yaml --output organizations")
+	commands.Append("cryptogen generate --config=/root/opt/config/crypto-config.yaml --output=\"crypto-config\"")
 }
