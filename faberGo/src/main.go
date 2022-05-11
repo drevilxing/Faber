@@ -1,6 +1,7 @@
 package main
 
 import (
+	"faberGo/src/yaml"
 	"fmt"
 )
 
@@ -8,6 +9,7 @@ const ConfigFiles = "./config"
 const YamlFiles = "./assert"
 
 func main() {
+	yaml.GenerateCryptoConfigExample()
 	// 从服务器对应位置加载配置文件信息
 	ListGenerateConfigFile(ConfigFiles)
 	fmt.Println(configs)
