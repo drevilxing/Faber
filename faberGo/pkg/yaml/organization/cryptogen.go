@@ -52,17 +52,28 @@ func GenerateEmptyCryptogenConfig() *CryptogenConfig {
 	}
 }
 
-func (that *CryptogenConfig) AddOrdererOrg(name, domain, hostname string, sans []string) {
+func (that *CryptogenConfig) AddOrdererOrg(name, domain string) {
 	*that.OrdererOrgs = append(*that.OrdererOrgs, &OrdererOrg{
 		Name:          name,
 		Domain:        domain,
 		EnableNodeOUs: true,
-		Specs: &[]*Specs{
-			&Specs{
-				Hostname: hostname,
-				SANS:     &sans,
-			},
-		},
+		Specs:         &[]*Specs{},
+	})
+}
+
+func (that *CryptogenConfig) AddOrdererOrgPeer(orgName, hostname string, sans []string) {
+	var org *OrdererOrg
+	for i := range *that.OrdererOrgs {
+		if (*that.OrdererOrgs)[i].Name == orgName {
+			org = (*that.OrdererOrgs)[i]
+		}
+	}
+	if nil == org {
+		return
+	}
+	*org.Specs = append(*org.Specs, &Specs{
+		Hostname: hostname,
+		SANS:     &sans,
 	})
 }
 

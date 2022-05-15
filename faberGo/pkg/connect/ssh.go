@@ -87,3 +87,30 @@ func (that *Device) Execute(command string) (result string, err error) {
 	result = string(buffer)
 	return result, nil
 }
+
+func (that *Device) ExecuteAndPrint(command string) (err error) {
+	if nil == that.client {
+		err = that.Connect()
+		if nil != err {
+			return err
+		}
+	}
+	session, err := that.client.NewSession()
+	if nil != err {
+		return err
+	}
+	defer func(session *ssh.Session) {
+		errIn := session.Close()
+		if errIn != nil {
+			fmt.Println(errIn.Error())
+			return
+		}
+	}(session)
+	fmt.Println(command)
+	buffer, err := session.CombinedOutput(command)
+	if nil != err {
+		return err
+	}
+	fmt.Println(string(buffer))
+	return nil
+}

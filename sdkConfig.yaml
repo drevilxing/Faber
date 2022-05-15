@@ -60,47 +60,47 @@ client:
       path: ""
     systemCertPool: true
 channels:
-- key: channel-1
-  orderers:
-  - orderer0.orderer.test.com
-  - orderer1.orderer.test.com
-  - orderer2.orderer.test.com
-  peers:
-  - key: peer0.org0.test.com
-    endorsingPeer: true
-    chaincodeQuery: true
-    ledgerQuery: true
-    eventSource: true
-  - key: peer0.org1.test.com
-    endorsingPeer: true
-    chaincodeQuery: true
-    ledgerQuery: true
-    eventSource: true
-  - key: peer0.org2.test.com
-    endorsingPeer: true
-    chaincodeQuery: true
-    ledgerQuery: true
-    eventSource: true
-  polices:
-    queryChannelConfig:
-      minResponses: 1
-      maxTargets: 1
-      retryOpts:
-        attempts: 5
-        initialBackoff: 500ms
-        maxBackoff: 5s
-        backoffFactor: "2.0"
-  selection:
-    sortingStrategy: BlockHeightPriority
-    balancer: RoundRobin
-    blockHeightLagThreshold: 5
-  eventService:
-    resolverStrategy: PreferOrg
-    minBlockHeightResolverMode: ResolveByThreshold
-    blockHeightLagThreshold: 5
-    reconnectBlockHeightLagThreshold: 10
-    peerMonitor: Enabled
-    peerMonitorPeriod: 5s
+  channel-1:
+    orderers:
+    - orderer0.orderer.test.com
+    - orderer1.orderer.test.com
+    - orderer2.orderer.test.com
+    peers:
+      peer0.org0.test.com:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+       peer0.org1.test.com:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+      peer0.org2.test.com:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+    polices:
+      queryChannelConfig:
+        minResponses: 1
+        maxTargets: 1
+        retryOpts:
+          attempts: 5
+          initialBackoff: 500ms
+          maxBackoff: 5s
+          backoffFactor: "2.0"
+    selection:
+      sortingStrategy: BlockHeightPriority
+      balancer: RoundRobin
+      blockHeightLagThreshold: 5
+    eventService:
+      resolverStrategy: PreferOrg
+      minBlockHeightResolverMode: ResolveByThreshold
+      blockHeightLagThreshold: 5
+      reconnectBlockHeightLagThreshold: 10
+      peerMonitor: Enabled
+      peerMonitorPeriod: 5s
 organizations:
 - key: orderer.test.com
   mspId: ordererMSP

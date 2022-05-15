@@ -1,12 +1,11 @@
 package main
 
-import "faberGo/src/yaml"
-
 const ConfigFiles = "./config"
 const YamlFiles = "./assert"
 
 func main() {
-	yaml.GenerateCryptoConfigExample()
+	Example()
+	//	yaml.GenerateCryptoConfigExample()
 
 	// 从服务器对应位置加载配置文件信息
 	//ListGenerateConfigFile(ConfigFiles)
@@ -24,6 +23,6 @@ func main() {
 	//if nil != errSdk {
 	//	fmt.Println(errSdk.Error())
 	//}
-	StartingBasicServer()
+	//	StartingBasicServer()
 	//server.Listen()
 }

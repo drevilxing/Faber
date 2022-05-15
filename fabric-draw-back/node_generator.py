@@ -10,7 +10,8 @@ def start_ca(ca_id, ca_information, fabric_name, target_host, crypto_base):
     # 连接服务器
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(hostname=address['host'], port=address['ssh_port'], username='root', password='fd6449387')
+    print(hostname=address['host'], port=address['ssh_port'])
+    ssh.connect(hostname=address['host'], port=address['ssh_port'], username='root', password='linux')
     stdin, stdout, stderr = ssh.exec_command(f'if [ ! -d {crypto_base} ]; then mkdir -p {crypto_base}; fi')
     stdout.channel.recv_exit_status()
     ftp_client = ssh.open_sftp()
@@ -35,7 +36,7 @@ def start_peer(peer_id, peer_information, order_group_id, fabric_name, target_ho
     address = peer_information['address']
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(hostname=address['host'], port=address['ssh_port'], username='root', password='fd6449387')
+    ssh.connect(hostname=address['host'], port=address['ssh_port'], username='root', password='linux')
     ftp_client = ssh.open_sftp()
     node_name, org_name, domain = peer_id.split('.', 2)
     file_name = f'docker-compose-{org_name}-{node_name}.yaml'
@@ -51,7 +52,7 @@ def start_order(order_id, order_information, fabric_name, channel_id, peer_group
     address = order_information['address']
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(hostname=address['host'], port=address['ssh_port'], username='root', password='fd6449387')
+    ssh.connect(hostname=address['host'], port=address['ssh_port'], username='root', password='linux')
     ssh.exec_command(f'if [ ! -d {crypto_base}/channel-artifacts ]; then mkdir -p {crypto_base}/channel-artifacts; fi')
     ftp_client = ssh.open_sftp()
     file_name = f'docker-compose-{group_name}-{node_name}.yaml'
