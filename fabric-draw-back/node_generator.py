@@ -8,9 +8,9 @@ def start_ca(ca_id, ca_information, fabric_name, target_host, crypto_base):
     node_name, group_name, domain = ca_id.split('.', 2)
     address = ca_information['address']
     # 连接服务器
+    print(address['host'], address['ssh_port'])
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    print(hostname=address['host'], port=address['ssh_port'])
     ssh.connect(hostname=address['host'], port=address['ssh_port'], username='root', password='linux')
     stdin, stdout, stderr = ssh.exec_command(f'if [ ! -d {crypto_base} ]; then mkdir -p {crypto_base}; fi')
     stdout.channel.recv_exit_status()
@@ -84,6 +84,7 @@ def parse_json(network_topology_json):
     target_host = ''
     peer_group_ids = []
     crypto_path = "/root/opt"
+
     # 读取group信息
     for blockchain in network_topology_json['blockchains']:
         for group in network_topology_json['groups']:
@@ -109,6 +110,20 @@ def parse_json(network_topology_json):
                     start_ca(group['nodes']['ca'], node, blockchain['name'], target_host, crypto_path)
         print("成功启动ca节点")
 
+        for node in network_topology_json["nodes"]:
+            if "orderer" in node["type"]:
+                orderers[node['key']] = node
+
+        # 获取configtx文件
+        configtx_filename = 'configtx.yaml'
+
+        for group in network_topology_json['groups']:
+            if group['key'] == order_group_id:
+                for order_id in group['nodes']['orderer']:
+                    for node in network_topology_json['nodes']:
+                        if node['key'] == order_id:
+                            start_order(order_id, node, blockchain['name'], blockchain['channels'][0], peer_group_ids, configtx_filename, crypto_path)
+        print("成功启动orderer节点")
 
         # 对每个peer节点
         for org_id in peer_group_ids:
@@ -136,21 +151,6 @@ def parse_json(network_topology_json):
                         start_peer(peer_id, node, order_group_id, blockchain['name'], target_host, peer_ca_port, crypto_path)
         orderers = dict()
         print("成功启动peer节点")
-
-        for node in network_topology_json["nodes"]:
-            if "orderer" in node["type"]:
-                orderers[node['key']] = node
-
-        # 获取configtx文件
-        configtx_filename = 'configtx.yaml'
-
-        for group in network_topology_json['groups']:
-            if group['key'] == order_group_id:
-                for order_id in group['nodes']['orderer']:
-                    for node in network_topology_json['nodes']:
-                        if node['key'] == order_id:
-                            start_order(order_id, node, blockchain['name'], blockchain['channels'][0], peer_group_ids, configtx_filename, crypto_path)
-        print("成功启动orderer节点")
 
 
 if __name__ == '__main__':
