@@ -1,11 +1,11 @@
 package target
 
 type PeerConfig struct {
-	Key         string       `json:"key"`
-	Url         string       `json:"url"`
-	EventUrl    string       `json:"eventUrl"`
-	GrpcOptions *GrpcOptions `json:"grpcOptions"`
-	TlsCACerts  *TlsCACerts  `json:"tlsCaCerts"`
+	Key         string       `json:"key" yaml:"key"`
+	Url         string       `json:"url" yaml:"url"`
+	EventUrl    string       `json:"eventUrl" yaml:"eventUrl"`
+	GrpcOptions *GrpcOptions `json:"grpcOptions" yaml:"grpcOptions"`
+	TlsCACerts  *TlsCACerts  `json:"tlsCaCerts" yaml:"tlsCACerts"`
 }
 
 func GenerateDefaultPeerConfig(key string, url string, eventUrl string) *PeerConfig {

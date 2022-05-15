@@ -1,12 +1,12 @@
 package client
 
 type DiscoveryTimeout struct {
-	Connection string `json:"connection"`
-	Response   string `json:"response"`
+	Connection string `json:"connection" yaml:"connection"`
+	Response   string `json:"response" yaml:"response"`
 }
 
 type Discovery struct {
-	Timeout *DiscoveryTimeout `json:"timeout"`
+	Timeout *DiscoveryTimeout `json:"timeout" yaml:"timeout"`
 }
 
 func GenerateDefaultDiscovery() *Discovery {

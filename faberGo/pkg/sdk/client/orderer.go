@@ -1,12 +1,12 @@
 package client
 
 type OrdererTimeout struct {
-	Connection string `json:"connection"`
-	Response   string `json:"response"`
+	Connection string `json:"connection" yaml:"connection"`
+	Response   string `json:"response" yaml:"response"`
 }
 
 type Orderer struct {
-	Timeout *OrdererTimeout `json:"timeout"`
+	Timeout *OrdererTimeout `json:"timeout" yaml:"timeout"`
 }
 
 func GenerateDefaultOrderer() *Orderer {

@@ -15,6 +15,7 @@ const channel1 = "channel-1"
 
 // org
 
+const orgOrdererName = "Orderer"
 const orgOrderer = "orderer.test.com"
 const org0 = "org0.test.com"
 const org1 = "org1.test.com"
@@ -48,6 +49,7 @@ func GenerateDeploymentConfigExample(path string) error {
 		Bootstrap: &[]string{},
 		Type:      &[]string{org.NodeCA},
 	})
+
 	generateConfig.AddNode(&nodes.Node{
 		Key: "orderer0",
 		Org: orgOrderer,
@@ -59,6 +61,7 @@ func GenerateDeploymentConfigExample(path string) error {
 		Bootstrap: &[]string{},
 		Type:      &[]string{org.NodeOrderer},
 	})
+
 	generateConfig.AddNode(&nodes.Node{
 		Key: "orderer1",
 		Org: orgOrderer,
@@ -70,6 +73,7 @@ func GenerateDeploymentConfigExample(path string) error {
 		Bootstrap: &[]string{},
 		Type:      &[]string{org.NodeOrderer},
 	})
+
 	generateConfig.AddNode(&nodes.Node{
 		Key: "orderer2",
 		Org: orgOrderer,
@@ -93,6 +97,7 @@ func GenerateDeploymentConfigExample(path string) error {
 		Bootstrap: &[]string{},
 		Type:      &[]string{org.NodeCA},
 	})
+
 	generateConfig.AddNode(&nodes.Node{
 		Key: "peer0",
 		Org: org0,
@@ -116,6 +121,7 @@ func GenerateDeploymentConfigExample(path string) error {
 		Bootstrap: &[]string{},
 		Type:      &[]string{org.NodeCA},
 	})
+
 	generateConfig.AddNode(&nodes.Node{
 		Key: "peer0",
 		Org: org1,
@@ -139,6 +145,7 @@ func GenerateDeploymentConfigExample(path string) error {
 		Bootstrap: &[]string{},
 		Type:      &[]string{org.NodeCA},
 	})
+
 	generateConfig.AddNode(&nodes.Node{
 		Key: "peer0",
 		Org: org2,
