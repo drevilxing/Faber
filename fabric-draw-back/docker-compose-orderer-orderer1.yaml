@@ -32,8 +32,8 @@ services:
     - 8050:8050
     volumes:
     - /root/opt/channel-artifacts/orderer.genesis.block:/var/hyperledger/orderer/orderer.genesis.block
-    - /root/opt/organizations/orderer.test.com/peers/orderer1.orderer.test.com/msp:/var/hyperledger/orderer/msp
-    - /root/opt/organizations/orderer.test.com/peers/orderer1.orderer.test.com/tls/:/var/hyperledger/orderer/tls
+    - /root/opt/crypto-config/ordererOrganizations/orderer.test.com/orderers/orderer1.orderer.test.com/msp:/var/hyperledger/orderer/msp
+    - /root/opt/crypto-config/ordererOrganizations/orderer.test.com/orderers/orderer1.orderer.test.com/tls/:/var/hyperledger/orderer/tls
     - orderer1.orderer.test.com:/var/hyperledger/production/orderer
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
 version: '2'

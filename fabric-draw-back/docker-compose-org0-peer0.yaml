@@ -32,8 +32,8 @@ services:
     - 8051:8051
     volumes:
     - /var/run/:/host/var/run/
-    - /root/opt/organizations/org0.test.com/peers/peer0.org0.test.com/msp:/etc/hyperledger/fabric/msp
-    - /root/opt/organizations/org0.test.com/peers/peer0.org0.test.com/tls:/etc/hyperledger/fabric/tls
+    - /root/opt/crypto-config/peerOrganizations/org0.test.com/peers/peer0.org0.test.com/msp:/etc/hyperledger/fabric/msp
+    - /root/opt/crypto-config/peerOrganizations/org0.test.com/peers/peer0.org0.test.com/tls:/etc/hyperledger/fabric/tls
     - peer0.org0.test.com:/var/hyperledger/production
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
 version: '2'

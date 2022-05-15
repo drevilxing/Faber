@@ -27,16 +27,22 @@ class ConfigTXYamlGenerator:
         for group in groups:
             elems = group['key'].split(".")
             name = elems[0].capitalize()
-            Organization = {
-                "Name": name,
-                "SkipAsForeign": False,
-                "ID": name + "MSP",
-                "MSPDir": self.crypto_base + "/organizations/" + group['key'] + "/msp"
-            }
-            if "order" in group['key']:
+            if 'order' in group['key']:
+                Organization = {
+                    "Name": name,
+                    "SkipAsForeign": False,
+                    "ID": name + "MSP",
+                    "MSPDir": self.crypto_base + "/crypto-config/ordererOrganizations/" + group['key'] + "/msp"
+                }
                 Organization["Policies"] = self.configtx["Organizations"][0]["Policies"]
                 Organization["OrdererEndpoints"] = group["nodes"]["orderer"]
             else:
+                Organization = {
+                    "Name": name,
+                    "SkipAsForeign": False,
+                    "ID": name + "MSP",
+                    "MSPDir": self.crypto_base + "/crypto-config/peerOrganizations/" + group['key'] + "/msp"
+                }
                 Organization["Policies"] = self.configtx["Organizations"][1]["Policies"]
             Organization["AnchorPeers"] = []
             for url in group["nodes"]["anchor_peers"]:
@@ -62,10 +68,10 @@ class ConfigTXYamlGenerator:
             Consenters.append({
                 "Host": orderer,
                 "Port": int(orderers[orderer]["address"]["fabric_port"]),
-                "ClientTLSCert": self.crypto_base + "/organizations/" + ".".join(
-                    orderer.split(".")[-3:]) + "/peers/" + orderer + "/tls/server.crt",
-                "ServerTLSCert": self.crypto_base + "/organizations/" + ".".join(
-                    orderer.split(".")[-3:]) + "/peers/" + orderer + "/tls/server.crt"
+                "ClientTLSCert": self.crypto_base + "/crypto-config/ordererOrganizations/" + ".".join(
+                    orderer.split(".")[-3:]) + "/orderers/" + orderer + "/tls/server.crt",
+                "ServerTLSCert": self.crypto_base + "/crypto-config/ordererOrganizations/" + ".".join(
+                    orderer.split(".")[-3:]) + "/orderers/" + orderer + "/tls/server.crt"
             })
         Orderer["Addresses"] = Addresses
         Orderer["EtcdRaft"]["Consenters"] = Consenters
@@ -117,7 +123,7 @@ class CAYamlGenerator(YamlGenerator):
     def __init__(self):
         super().__init__()
 
-    def generate(self, node_id, org_name, fabric_name, fabric_port, crypto_path):
+    def generate(self, node_id, org_name, fabric_name, fabric_port, crypto_path, domain = 'test.com'):
         with open('template/docker-compose-ca-template.yaml') as file:
             docker_yaml = yaml.load(file, Loader=yaml.Loader)
         docker_yaml['networks']['net']['external']['name'] = fabric_name
@@ -126,7 +132,11 @@ class CAYamlGenerator(YamlGenerator):
         ca_information['environment'][3] = f'FABRIC_CA_SERVER_PORT={fabric_port}'
         ca_information['environment'][4] = f'FABRIC_CA_SERVER_CSR_HOSTS=localhost, {node_id}'
         ca_information['ports'][0] = f'{fabric_port}:{fabric_port}'
-        ca_information['volumes'][0] = f'/root/opt/organizations/fabric-ca/{org_name}:/etc/hyperledger/fabric-ca-server'
+        if 'orderer' in org_name:
+            ca_information['volumes'][0] = f'{crypto_path}/crypto-config/ordererOrganizations/{org_name}.{domain}:/etc/hyperledger/fabric-ca-server'
+        else:
+            ca_information['volumes'][
+                0] = f'{crypto_path}/crypto-config/peerOrganizations/{org_name}.{domain}:/etc/hyperledger/fabric-ca-server'
         ca_information['container_name'] = node_id
         del docker_yaml['services']['ca.org1.test.com']
         docker_yaml['services'][node_id] = ca_information
@@ -150,9 +160,9 @@ class OrderYamlGenerator(YamlGenerator):
         order_information['environment'][5] = f'ORDERER_GENERAL_LOCALMSPID={org_name.capitalize()}MSP'
         order_information['environment'][16] = f'ORDERER_OPERATIONS_LISTENADDRESS={node_id}:8443'
         order_information['volumes'][
-            1] = f'{crypto_path}/organizations/orderer.test.com/peers/{node_id}/msp:/var/hyperledger/orderer/msp'
+            1] = f'{crypto_path}/crypto-config/ordererOrganizations/orderer.test.com/orderers/{node_id}/msp:/var/hyperledger/orderer/msp'
         order_information['volumes'][
-            2] = f'{crypto_path}/organizations/orderer.test.com/peers/{node_id}/tls/:/var/hyperledger/orderer/tls'
+            2] = f'{crypto_path}/crypto-config/ordererOrganizations/orderer.test.com/orderers/{node_id}/tls/:/var/hyperledger/orderer/tls'
         order_information['volumes'][3] = f'{node_id}:/var/hyperledger/production/orderer'
         order_information['ports'][0] = f'{fabric_port}:{fabric_port}'
         del docker_yaml['services']['orderer0.orderer.test.com']
@@ -183,9 +193,9 @@ class PeerYamlGenerator(YamlGenerator):
         peer_information['environment'][15] = f'CORE_PEER_LOCALMSPID={org_name.capitalize()}MSP'
         peer_information['environment'][16] = f'CORE_OPERATIONS_LISTENADDRESS={node_id}:9443'
         peer_information['volumes'][
-            1] = f'{crypto_path}/organizations/{org_name}.{domain}/peers/{node_id}/msp:/etc/hyperledger/fabric/msp'
+            1] = f'{crypto_path}/crypto-config/peerOrganizations/{org_name}.{domain}/peers/{node_id}/msp:/etc/hyperledger/fabric/msp'
         peer_information['volumes'][
-            2] = f'{crypto_path}/organizations/{org_name}.{domain}/peers/{node_id}/tls:/etc/hyperledger/fabric/tls'
+            2] = f'{crypto_path}/crypto-config/peerOrganizations/{org_name}.{domain}/peers/{node_id}/tls:/etc/hyperledger/fabric/tls'
         peer_information['volumes'][3] = f'{node_id}:/var/hyperledger/production'
         peer_information['ports'][0] = f'{fabric_port}:{fabric_port}'
         del docker_yaml['services']['peer0.org1.test.com']

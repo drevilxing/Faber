@@ -18,5 +18,5 @@ services:
     ports:
     - 9054:9054
     volumes:
-    - /root/opt/organizations/fabric-ca/org0:/etc/hyperledger/fabric-ca-server
+    - /root/opt/crypto-config/peerOrganizations/org0.test.com/ca:/etc/hyperledger/fabric-ca-server
 version: '2'

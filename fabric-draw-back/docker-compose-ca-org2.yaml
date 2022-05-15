@@ -18,5 +18,5 @@ services:
     ports:
     - 12054:12054
     volumes:
-    - /root/opt/organizations/fabric-ca/org2:/etc/hyperledger/fabric-ca-server
+    - /root/opt/crypto-config/peerOrganizations/org2.test.com/ca:/etc/hyperledger/fabric-ca-server
 version: '2'
