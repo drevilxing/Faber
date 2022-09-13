@@ -7,10 +7,10 @@ Document of fabGo.
 =================================
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :maxdepth: 4
+   :caption: 目录
 
-   install/environment
+   install/index
 
 Indices and tables
 ==================
