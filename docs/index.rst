@@ -6,15 +6,25 @@
 Document of fabGo.
 =================================
 
+.. image:: https://readthedocs.org/projects/fabgo/badge/?version=latest
+    :target: https://fabgo.readthedocs.io/zh/latest/?badge=latest
+    :alt: Documentation Status
+
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
    :caption: 目录
 
    install/index
 
-Indices and tables
-==================
+GitHub
+=================================
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+https://github.com/EternallyAscend/faber
+
+
+.. Indices and tables
+.. ==================
+.. 
+.. * :ref:`genindex`
+.. * :ref:`modindex`
+.. * :ref:`search`
