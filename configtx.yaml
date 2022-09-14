@@ -1,0 +1,237 @@
+Organizations:
+- Name: default
+  ID: default
+  MSPDir: defaultMSP
+  Policies:
+    Readers:
+      Type: Signature
+      Rule: OR('default.member')
+    Writers:
+      Type: Signature
+      Rule: OR('default.member')
+    Admins:
+      Type: Signature
+      Rule: OR('default.admin')
+  OrdererEndpoints:
+  - orderer.default.com:7051
+  AnchorPeers:
+  - Host: peer.default.com
+    Port: 7251
+Capabilities:
+  Channel:
+    V2_0: true
+  Orderer:
+    V2_0: true
+  Application:
+    V2_0: true
+Application:
+  Polices:
+    Reader:
+      Type: ImplicitMeta
+      Rule: ANY Readers
+    Writers:
+      Type: ImplicitMeta
+      Rule: ANY Writers
+    Admins:
+      Type: ImplicitMeta
+      Rule: MAJORITY Admins
+    LifecycleEndorsement:
+      Type: ImplicitMeta
+      Rule: MAJORITY Endorsement
+    Endorsement:
+      Type: ImplicitMeta
+      Rule: MAJORITY Endorsement
+  Capabilities:
+    Channel:
+      V2_0: true
+    Orderer:
+      V2_0: true
+    Application:
+      V2_0: true
+Orderer:
+  OrdererType: etcdraft
+  Addresses:
+  - orderer.default.com:7051
+  EtcdRaft:
+    Consenters:
+    - Host: orderer.default.com
+      Port: 7051
+      ClientTlsCert: ""
+      ServerTlsCert: ""
+  BatchTimeout: 2s
+  BatchSize:
+    MaxMessageCount: 32
+    AbsoluteMaxBytes: 64 MB
+    PreferredMaxBytes: 4096 KB
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: ANY Readers
+    Writers:
+      Type: ImplicitMeta
+      Rule: ANY Writers
+    Admins:
+      Type: ImplicitMeta
+      Rule: MAJORITY Admins
+    BlockValidation:
+      Type: ImplicitMeta
+      Rule: ANY Writers
+  Capabilities:
+    Channel:
+      V2_0: true
+    Orderer:
+      V2_0: true
+    Application:
+      V2_0: true
+Channel:
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: ANY Readers
+    Writers:
+      Type: ImplicitMeta
+      Rule: ANY Writers
+    Admins:
+      Type: ImplicitMeta
+      Rule: MAJORITY Admins
+  Capabilities:
+    Channel:
+      V2_0: true
+    Orderer:
+      V2_0: true
+    Application:
+      V2_0: true
+Profiles:
+  defaultChannel:
+    Consortium: defaultConsortium
+    Channel:
+      Policies:
+        Readers:
+          Type: ImplicitMeta
+          Rule: ANY Readers
+        Writers:
+          Type: ImplicitMeta
+          Rule: ANY Writers
+        Admins:
+          Type: ImplicitMeta
+          Rule: MAJORITY Admins
+      Capabilities:
+        Channel:
+          V2_0: true
+        Orderer:
+          V2_0: true
+        Application:
+          V2_0: true
+    Orderer:
+      Orderer:
+        OrdererType: etcdraft
+        Addresses:
+        - orderer.default.com:7051
+        EtcdRaft:
+          Consenters:
+          - Host: orderer.default.com
+            Port: 7051
+            ClientTlsCert: ""
+            ServerTlsCert: ""
+        BatchTimeout: 2s
+        BatchSize:
+          MaxMessageCount: 32
+          AbsoluteMaxBytes: 64 MB
+          PreferredMaxBytes: 4096 KB
+        Policies:
+          Readers:
+            Type: ImplicitMeta
+            Rule: ANY Readers
+          Writers:
+            Type: ImplicitMeta
+            Rule: ANY Writers
+          Admins:
+            Type: ImplicitMeta
+            Rule: MAJORITY Admins
+          BlockValidation:
+            Type: ImplicitMeta
+            Rule: ANY Writers
+        Capabilities:
+          Channel:
+            V2_0: true
+          Orderer:
+            V2_0: true
+          Application:
+            V2_0: true
+      Organizations:
+      - Name: default
+        ID: default
+        MSPDir: defaultMSP
+        Policies:
+          Readers:
+            Type: Signature
+            Rule: OR('default.member')
+          Writers:
+            Type: Signature
+            Rule: OR('default.member')
+          Admins:
+            Type: Signature
+            Rule: OR('default.admin')
+        OrdererEndpoints:
+        - orderer.default.com:7051
+        AnchorPeers:
+        - Host: peer.default.com
+          Port: 7251
+      Capabilities:
+        Channel:
+          V2_0: true
+        Orderer:
+          V2_0: true
+        Application:
+          V2_0: true
+    Application:
+      Application:
+        Polices:
+          Reader:
+            Type: ImplicitMeta
+            Rule: ANY Readers
+          Writers:
+            Type: ImplicitMeta
+            Rule: ANY Writers
+          Admins:
+            Type: ImplicitMeta
+            Rule: MAJORITY Admins
+          LifecycleEndorsement:
+            Type: ImplicitMeta
+            Rule: MAJORITY Endorsement
+          Endorsement:
+            Type: ImplicitMeta
+            Rule: MAJORITY Endorsement
+        Capabilities:
+          Channel:
+            V2_0: true
+          Orderer:
+            V2_0: true
+          Application:
+            V2_0: true
+      Organizations:
+      - Name: default
+        ID: default
+        MSPDir: defaultMSP
+        Policies:
+          Readers:
+            Type: Signature
+            Rule: OR('default.member')
+          Writers:
+            Type: Signature
+            Rule: OR('default.member')
+          Admins:
+            Type: Signature
+            Rule: OR('default.admin')
+        OrdererEndpoints:
+        - orderer.default.com:7051
+        AnchorPeers:
+        - Host: peer.default.com
+          Port: 7251
+      Capabilities:
+        Channel:
+          V2_0: true
+        Orderer:
+          V2_0: true
+        Application:
+          V2_0: true
