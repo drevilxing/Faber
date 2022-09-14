@@ -8,10 +8,10 @@ def start_ca(ca_id, ca_information, fabric_name, target_host, crypto_base):
     node_name, group_name, domain = ca_id.split('.', 2)
     address = ca_information['address']
     # 连接服务器
-    print(address['host'], address['ssh_port'])
+#     print('192.168.3.20', address['ssh_port'])
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(hostname=address['host'], port=address['ssh_port'], username='root', password='linux')
+    ssh.connect(hostname='192.168.3.20', port=address['ssh_port'], username='root', password='linux')
     stdin, stdout, stderr = ssh.exec_command(f'if [ ! -d {crypto_base} ]; then mkdir -p {crypto_base}; fi')
     stdout.channel.recv_exit_status()
     ftp_client = ssh.open_sftp()
@@ -36,7 +36,7 @@ def start_peer(peer_id, peer_information, order_group_id, fabric_name, target_ho
     address = peer_information['address']
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(hostname=address['host'], port=address['ssh_port'], username='root', password='linux')
+    ssh.connect(hostname='192.168.3.20', port=address['ssh_port'], username='root', password='linux')
     ftp_client = ssh.open_sftp()
     node_name, org_name, domain = peer_id.split('.', 2)
     file_name = f'docker-compose-{org_name}-{node_name}.yaml'
@@ -52,7 +52,7 @@ def start_order(order_id, order_information, fabric_name, channel_id, peer_group
     address = order_information['address']
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(hostname=address['host'], port=address['ssh_port'], username='root', password='linux')
+    ssh.connect(hostname='192.168.3.20', port=address['ssh_port'], username='root', password='linux')
     ssh.exec_command(f'if [ ! -d {crypto_base}/channel-artifacts ]; then mkdir -p {crypto_base}/channel-artifacts; fi')
     ftp_client = ssh.open_sftp()
     file_name = f'docker-compose-{group_name}-{node_name}.yaml'
@@ -110,6 +110,7 @@ def parse_json(network_topology_json):
                     start_ca(group['nodes']['ca'], node, blockchain['name'], target_host, crypto_path)
         print("成功启动ca节点")
 
+        orderers = dict()
         for node in network_topology_json["nodes"]:
             if "orderer" in node["type"]:
                 orderers[node['key']] = node
@@ -149,7 +150,6 @@ def parse_json(network_topology_json):
                 for node in network_topology_json['nodes']:
                     if peer_id == node['key']:
                         start_peer(peer_id, node, order_group_id, blockchain['name'], target_host, peer_ca_port, crypto_path)
-        orderers = dict()
         print("成功启动peer节点")
 
 

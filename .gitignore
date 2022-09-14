@@ -1,4 +1,7 @@
 .idea
 .vscode
+
+docs/build
+
 fabric-draw
 fabric-samples

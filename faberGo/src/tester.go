@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bytes"
 	"faberGo/pkg/connect"
 	"fmt"
-	"os/exec"
 )
 
 const IP = "192.168.3.20"
@@ -23,8 +21,8 @@ func Example() {
 			UsePwd:   true,
 		},
 	}
-	//Environment(commands)
-	//Organization(commands)
+	Environment(commands)
+	Organization(commands)
 	Peer(commands)
 
 	results, errs, err := commands.Execute()
@@ -83,45 +81,45 @@ func Environment(commands *connect.Commands) {
 	//	fmt.Println("err:", err)
 	//}
 
-	err = cli.ExecuteAndPrint("tar -C /usr/bin -xzf go1.17.3.linux-amd64.tar.gz")
-	if nil != err {
-		fmt.Println("err:", err)
-	}
-
-	err = cli.ExecuteAndPrint("echo \"export PATH=$PATH:/usr/bin/go/bin\" >> ~/.profile")
-	if nil != err {
-		fmt.Println("err:", err)
-	}
-
-	err = cli.ExecuteAndPrint("source ~/.profile")
-	if nil != err {
-		fmt.Println("err:", err)
-	}
-
-	//err = cli.ExecuteAndPrint("git clone -b binary-1.2.2 https://gitee.com/Ambuland/packages.git")
+	//err = cli.ExecuteAndPrint("tar -C /usr/bin -xzf go1.17.3.linux-amd64.tar.gz")
 	//if nil != err {
 	//	fmt.Println("err:", err)
 	//}
 
-	err = cli.ExecuteAndPrint("cd packages")
+	//err = cli.ExecuteAndPrint("echo \"export PATH=$PATH:/usr/bin/go/bin\" >> ~/.profile")
+	//if nil != err {
+	//	fmt.Println("err:", err)
+	//}
+
+	//err = cli.ExecuteAndPrint("source ~/.profile")
+	//if nil != err {
+	//	fmt.Println("err:", err)
+	//}
+
+	err = cli.ExecuteAndPrint("git clone -b binary-1.2.2 https://gitee.com/Ambuland/packages.git")
 	if nil != err {
 		fmt.Println("err:", err)
 	}
 
-	err = cli.ExecuteAndPrint("tar -xzvf hyperledger-fabric-linux-amd64-2.2.0.tar.gz -C /usr")
-	if nil != err {
-		fmt.Println("err:", err)
-	}
+	//err = cli.ExecuteAndPrint("cd packages")
+	//if nil != err {
+	//	fmt.Println("err:", err)
+	//}
+	//
+	//err = cli.ExecuteAndPrint("tar -xzvf hyperledger-fabric-linux-amd64-2.2.0.tar.gz -C /usr")
+	//if nil != err {
+	//	fmt.Println("err:", err)
+	//}
 
 	//err = cli.ExecuteAndPrint("cp ./bin/* /bin && cp ./bin/* /usr/bin")
 	//if nil != err {
 	//	fmt.Println("err:", err)
 	//}
 
-	err = cli.ExecuteAndPrint("tar -xzvf hyperledger-fabric-ca-linux-amd64-1.4.8.tar.gz -C /usr")
-	if nil != err {
-		fmt.Println("err:", err)
-	}
+	//err = cli.ExecuteAndPrint("tar -xzvf hyperledger-fabric-ca-linux-amd64-1.4.8.tar.gz -C /usr")
+	//if nil != err {
+	//	fmt.Println("err:", err)
+	//}
 
 	//err = cli.ExecuteAndPrint("cp ./bin/* /bin && cp ./bin/* /usr/bin")
 	//if nil != err {
@@ -133,7 +131,17 @@ func Environment(commands *connect.Commands) {
 	//	fmt.Println("err:", err)
 	//}
 
-	err = cli.ExecuteAndPrint("cd /root/Faber && chmod +x ./installGo.sh && ./installGo.sh")
+	err = cli.ExecuteAndPrint("echo \"#/bin/bash\ncd /root\ntar -xzf go1.17.3.linux-amd64.tar.gz -C /usr/bin\nexport PATH=$PATH:/usr/bin/go/bin\nsource ~/.profile\ngo version\ngo env -w GO111MODULE=on\ngo env -w GOPROXY=https://goproxy.cn,direct\ncd /root/packages\ntar -xzvf hyperledger-fabric-linux-amd64-2.2.0.tar.gz -C /usr\ntar -xzvf hyperledger-fabric-ca-linux-amd64-1.4.8.tar.gz -C /usr\" >> /root/install.sh")
+	if nil != err {
+		fmt.Println("err:", err)
+	}
+
+	err = cli.ExecuteAndPrint("cd /root/ && chmod +x ./install.sh")
+	if nil != err {
+		fmt.Println("err:", err)
+	}
+
+	err = cli.ExecuteAndPrint("./install.sh")
 	if nil != err {
 		fmt.Println("err:", err)
 	}
@@ -204,27 +212,27 @@ func Organization(commands *connect.Commands) {
 }
 
 func Peer(commands *connect.Commands) {
-	cli := commands.Device
-
-	err := cli.ExecuteAndPrint("cd /root/Faber/fabric-draw-back")
-	if nil != err {
-		fmt.Println("err:", err)
-	}
+	//cli := commands.Device
+	//
+	//err := cli.ExecuteAndPrint("cd /root/Faber/fabric-draw-back")
+	//if nil != err {
+	//	fmt.Println("err:", err)
+	//}
 	//err = cli.ExecuteAndPrint("python3 node_build.py")
 	//if nil != err {
 	//	fmt.Println("err:", err)
 	//}
 
-	cmd := exec.Command("/bin/bash", "-c", "cd fabric-draw-back && python3 node_generator.py")
-
-	//读取io.Writer类型的cmd.Stdout，再通过bytes.Buffer(缓冲byte类型的缓冲器)将byte类型转化为string类型(out.String():这是bytes类型提供的接口)
-	var out bytes.Buffer
-	cmd.Stdout = &out
-
-	//Run执行c包含的命令，并阻塞直到完成。  这里stdout被取出，cmd.Wait()无法正确获取stdin,stdout,stderr，则阻塞在那了
-	err = cmd.Run()
-	if nil != err {
-		fmt.Println("err:", err)
-	}
-	fmt.Println(out.String())
+	//cmd := exec.Command("/bin/bash", "-c", "cd fabric-draw-back && python3 node_generator.py")
+	//
+	////读取io.Writer类型的cmd.Stdout，再通过bytes.Buffer(缓冲byte类型的缓冲器)将byte类型转化为string类型(out.String():这是bytes类型提供的接口)
+	//var out bytes.Buffer
+	//cmd.Stdout = &out
+	//
+	////Run执行c包含的命令，并阻塞直到完成。  这里stdout被取出，cmd.Wait()无法正确获取stdin,stdout,stderr，则阻塞在那了
+	//err = cmd.Run()
+	//if nil != err {
+	//	fmt.Println("err:", err)
+	//}
+	//fmt.Println(out.String())
 }
