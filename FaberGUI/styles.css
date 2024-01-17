@@ -1,0 +1,64 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#canvas {
+    border: 1px solid #000; /* 为了更清晰地看到画布边界 */
+    width: 1300px;
+    height: 800px;
+}
+
+
+
+#draggableShapes div {
+    width: 50px;
+    height: 50px;
+    margin: 10px;
+    text-align: center;
+    line-height: 50px; /* 使文本垂直居中 */
+    border: 1px solid black;
+    cursor: grab;
+}
+
+#dragCircle {
+    border-radius: 50%; /* 使其成圆形 */
+}
+
+#dragTriangle {
+    border-radius: 35%; /* 使其成圆形 */
+}
+
+#dragSquare {
+    /* 正方形样式已由基本样式定义 */
+}
+
+
+
+
+
+#generateButton {
+    position: fixed; /* 固定位置 */
+    right: 20px; /* 右侧距离 */
+    top: 20px; /* 顶部距离 */
+    padding: 10px 20px; /* 内边距 */
+    font-size: 20px; /* 字体大小 */
+    background-color: #4CAF50; /* 背景色 */
+    color: white; /* 文本颜色 */
+    border: none; /* 无边框 */
+    border-radius: 5px; /* 边框圆角 */
+    cursor: pointer; /* 鼠标指针样式 */
+}
+
+#generateButton:hover {
+    background-color: #45a049; /* 鼠标悬停时的背景色 */
+}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal Popup Example</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <input type="text" id="inputKey" placeholder="Enter key">
+            <input type="text" id="inputBlockchains" placeholder="Enter blockchains">
+            <input type="text" id="inputChannel" placeholder="Enter channel">
+            <button id="submitBtn">输入结束</button>
+        </div>
+    </div>
+
+    <script src="script.js">
+        document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('myModal');
+    const btn = document.getElementById('submitBtn');
+
+    document.body.addEventListener('click', function() {
+        modal.style.display = 'block';
+    });
+
+    btn.addEventListener('click', function() {
+        const key = document.getElementById('inputKey').value;
+        const blockchains = document.getElementById('inputBlockchains').value;
+        const channel = document.getElementById('inputChannel').value;
+        
+        console.log("Key:", key, "Blockchains:", blockchains, "Channel:", channel);
+        modal.style.display = 'none';
+    });
+});
+
+
+
+    </script>
+</body>
+</html>
