@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Interaction</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="container">
+        <div id="sidebar">区块链默认设置<br></br>
+            <input type="text" id="put1" placeholder="key"><br></br>
+            <input type="text" id="put2" placeholder="name"><br></br>
+            <input type="text" id="put3" placeholder="channels"><br></br>
+            
+            group创建默认设置<br></br>
+            <input type="text" id="input1" placeholder="key"><br></br>
+            <input type="text" id="input2" placeholder="blockchains"><br></br>
+            <input type="text" id="input3" placeholder="channel"><br></br>
+    
+
+        节点创建默认设置<br></br>
+            <input type="text" id="key" placeholder="key"><br></br>
+            <input type="text" id="host" placeholder="host"><br></br>
+            <input type="text" id="ssh_port" placeholder="ssh_port"><br></br>
+            <input type="text" id="fabric_port" placeholder="fabric_port"><br></br>
+            <input type="text" id="bootstrap" placeholder="bootstrap"><br></br>
+<input type="checkbox" id="checkbox1" name="option1">
+<label for="checkbox1">leader_peer</label><br>
+<input type="checkbox" id="checkbox2" name="option2">
+<label for="checkbox2">anchor_peer</label><br>
+<input type="checkbox" id="checkbox3" name="option3">
+<label for="checkbox3">committing_peer</label><br>
+<input type="checkbox" id="checkbox4" name="option4">
+<label for="checkbox4">endorsing_peer</label><br>
+
+        
+        <button id="getValueBtn">Set Values</button>
+            
+        <div id="draggableShapes">
+            <div id="dragCircle" draggable="true">ca</div>
+            <div id="dragTriangle" draggable="true">orderer</div>
+            <div id="dragSquare" draggable="true">peer</div>
+        </div>
+
+
+        </div>
+        <canvas id="canvas"></canvas>
+
+        <button id="generateButton">一键生成</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+
+
+
+<script>
+    //定义全局变量
+    let value1, value2, value3;
+    let key,host,ssh_port,fabric_port,bootstrap;
+    let b1,b2,b3,b4;
+    let allname,allkey,allchannel;
+
+
+    let groups = [];
+    let nodes=[];
+
+
+
+
+
+    //定义group类
+    class Ellipse {
+        constructor(x, y, width, height,v1,v2,v3) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            this.key = v1;
+            this.blockchains = v2;
+            this.channel = v3;
+
+            this.ca=[]//ca我也设置为数组了
+            this.orderer=[]
+            this.leader_peers=[]
+            this.anchor_peers=[]
+            this.committing_peers=[]
+            this.endorsing_peers=[]
+        }
+
+        
+    
+        draw(ctx) {
+            ctx.beginPath();
+            ctx.setLineDash([5, 5]); // 设置虚线样式
+            ctx.ellipse(this.x, this.y, this.width, this.height, 0, 0, 2 * Math.PI);
+            ctx.stroke();
+
+            ctx.textAlign = 'center'; // 水平居中
+            ctx.textBaseline = 'middle'; // 垂直居中
+            ctx.fillText(this.key, this.x, this.y);
+        }
+    }
+
+
+
+    //定义node类
+    class node{
+        constructor(a,b,c,d,e,f){
+            this.key=a;
+            this.host=b;
+            this.ssh_port=c;
+            this.fabric_port=d;
+            this.bootstrap=e;
+            this.org=f;
+            this.type=[]
+
+        }
+
+    }
+
+    
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const canvas = document.getElementById('canvas');
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+    
+        const ctx = canvas.getContext('2d');
+    
+        canvas.addEventListener('click', function(event) {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            const ellipse = new Ellipse(x, y, 100, 60,value1,value2,value3);
+
+            ellipse.draw(ctx);
+            groups.push(ellipse);
+            console.log("Value 1:", value1, "Value 2:", value2, "Value 3:", value3,groups[0]);
+        });
+
+
+        const getValueBtn = document.getElementById('getValueBtn');
+        getValueBtn.addEventListener('click', function() {allname,allkey,allchannel;
+        allname=document.getElementById('put1').value;
+        allkey=document.getElementById('put2').value;
+        allchannel=document.getElementById('put3').value;
+        value1 = document.getElementById('input1').value;
+        value2 = document.getElementById('input2').value;
+        value3 = document.getElementById('input3').value;
+
+        key = document.getElementById('key').value;
+        host = document.getElementById('host').value;
+        ssh_port = document.getElementById('ssh_port').value;
+        fabric_port = document.getElementById('fabric_port').value;
+        bootstrap = document.getElementById('bootstrap').value;
+        
+        b1=document.getElementById('checkbox1').checked;
+        b2=document.getElementById('checkbox2').checked;
+        b3=document.getElementById('checkbox3').checked;
+        b4=document.getElementById('checkbox4').checked;
+
+
+        console.log(key,host,ssh_port,fabric_port,bootstrap,b1,b2,b3,b4 );
+    });
+
+
+
+    //拖拽
+    const dragElements = document.querySelectorAll('#draggableShapes div');
+    dragElements.forEach(elem => {
+        elem.addEventListener('dragstart', function(event) {
+            event.dataTransfer.setData("text/plain", event.target.id);
+        });
+    });
+
+    canvas.addEventListener('dragover', function(event) {
+        event.preventDefault(); // 防止默认处理
+    });
+
+    canvas.addEventListener('drop', function(event) {
+        event.preventDefault();
+        const droppedElemId = event.dataTransfer.getData("text/plain");
+        const x = event.clientX - canvas.getBoundingClientRect().left;
+        const y = event.clientY - canvas.getBoundingClientRect().top;
+
+        handleDropOnEllipse(droppedElemId, x, y);
+    });
+
+
+
+
+
+
+
+
+
+
+
+    const generateButton = document.getElementById('generateButton');
+    generateButton.addEventListener('click', function() {
+        generateAction();
+    });
+    function generateAction() {
+        // 构建文本文件内容
+        let fileContent = "";
+    
+        fileContent+='{\n"groups": [\n';
+        for(let i=0;i<groups.length;i++){
+            temp=groups[i];
+            fileContent+='{\n';
+            fileContent+=`"key":"${temp.key}",\n"ca":"${temp.ca[0]}",\n"orderer":[\n`;
+            for(let j=0;j<temp.orderer.length;j++){
+                fileContent+=`"${temp.orderer[j]}"`;
+                if(j==temp.orderer.length-1){
+                    fileContent+='\n';
+                }
+                else{
+                    fileContent+=',\n';
+                }
+            }
+            fileContent+='],\n';
+            fileContent+=`"leader_peers":[\n`;
+            for(let j=0;j<temp.leader_peers.length;j++){
+                fileContent+=`"${temp.leader_peers[j]}"`;
+                if(j==temp.leader_peers.length-1){
+                    fileContent+='\n';
+                }
+                else{
+                    fileContent+=',\n';
+                }
+            }
+            fileContent+='],\n';
+            fileContent+=`"anchor_peers":[\n`;
+            for(let j=0;j<temp.anchor_peers.length;j++){
+                fileContent+=`"${temp.anchor_peers[j]}"`;
+                if(j==temp.anchor_peers.length-1){
+                    fileContent+='\n';
+                }
+                else{
+                    fileContent+=',\n';
+                }
+            }
+            fileContent+='],\n';
+            fileContent+=`"committing_peers":[\n`;
+            for(let j=0;j<temp.committing_peers.length;j++){
+                fileContent+=`"${temp.committing_peers[j]}"`;
+                if(j==temp.committing_peers.length-1){
+                    fileContent+='\n';
+                }
+                else{
+                    fileContent+=',\n';
+                }
+            }
+            fileContent+='],\n';
+            fileContent+=`"endorsing_peers":[\n`;
+            for(let j=0;j<temp.endorsing_peers.length;j++){
+                fileContent+=`"${temp.endorsing_peers[j]}"`;
+                if(j==temp.endorsing_peers.length-1){
+                    fileContent+='\n';
+                }
+                else{
+                    fileContent+=',\n';
+                }
+            }
+            if(i<groups.length-1){
+            fileContent+=']\n},\n';
+            }
+            else{
+            fileContent+=']\n}\n],\n';
+            }          
+        }
+
+        fileContent+='"nodes":[\n';
+        for(let i=0;i<nodes.length;i++){
+            temp=nodes[i];
+            fileContent+=`{\n"key":"${temp.key}",\n"org":"${temp.org}",\n"adderss":{\n"host":"${temp.host}",\n"ssh_port":"${temp.ssh_port}",\n"fabric_port":"${temp.fabric_port}"\n},\n"bootstrap":[`;
+
+            fileContent+=`"${temp.bootstrap}"],\n"type":[\n`;
+            for(let j=0;j<temp.type.length;j++){
+                fileContent+=`"${temp.type[j]}"`;
+                if(j==temp.type.length-1){
+                    fileContent+='\n';
+                }
+                else{
+                    fileContent+=',\n';
+                }
+            }
+            if(i==nodes.length-1){
+            fileContent+=']\n}\n';
+            }
+            else{
+                fileContent+=']\n},\n'
+            }
+        }
+
+        fileContent+=`],\n"blockchains":[\n{\n"key":"${allkey}",\n"name":"${allname}",\n"channels":[\n"${allchannel}"\n]\n}\n]\n}`;
+
+
+ 
+        // 创建 Blob 对象
+        let blob = new Blob([fileContent], { type: "text/plain;charset=utf-8" });
+    
+        // 创建下载链接并模拟点击
+        let a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "data.txt"; // 设置下载的文件名
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+    }
+
+
+
+
+});
+
+
+
+
+function handleDropOnEllipse(droppedElemId, x, y) {
+    // 根据坐标找到对应的椭圆
+    const targetEllipse = groups.find(ellipse => {
+        return x >= ellipse.x - ellipse.width && x <= ellipse.x + ellipse.width
+            && y >= ellipse.y - ellipse.height && y <= ellipse.y + ellipse.height;
+    });
+
+    if (targetEllipse) {
+        temp=targetEllipse.key
+        console.log("Dropped " + droppedElemId + " on ellipse:", targetEllipse);
+        const tempnode=new node(key,host,ssh_port,fabric_port,bootstrap,temp);
+        if(droppedElemId=="dragCircle"){
+            tempnode.type.push("ca");
+            targetEllipse.ca.push(key);
+        }
+        if(droppedElemId=="dragTriangle"){
+            tempnode.type.push("orderer");
+            targetEllipse.orderer.push(key);
+        }
+        if(droppedElemId=="dragSquare"){
+            if(b1==true){
+                tempnode.type.push("leader_peer");
+                targetEllipse.leader_peers.push(key);
+            }
+            if(b2==true){
+                tempnode.type.push("anchor_peer");
+                targetEllipse.anchor_peers.push(key);
+            }
+            if(b3==true){
+                tempnode.type.push("committing_peer");
+                targetEllipse.committing_peers.push(key);
+            }
+            if(b4==true){
+                tempnode.type.push("endorsing_peer");
+                targetEllipse.endorsing_peers.push(key);
+            }
+        }
+       nodes.push(tempnode);
+       console.log(targetEllipse,tempnode,nodes,groups);
+    }
+
+
+}
+  
+    
+
+    
+
+
+
+</script>
+
+
+</html>
