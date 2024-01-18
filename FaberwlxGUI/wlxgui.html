@@ -208,82 +208,98 @@
         let fileContent = "";
     
         fileContent+='{\n"groups": [\n';
-        fileContent
-        for(i=0;i<groups.length;i++){
-            temp=groups[i]
-            fileContent+='{\n'
-            fileContent+='"key":"${temp.key}",\n"ca":"{temp.ca[0]}",\n"orderer":[\n'
-            for(j=0;j<temp.orderer.length;i++){
-                fileContent+='"{temp.orderer[i]}"'
+        for(let i=0;i<groups.length;i++){
+            temp=groups[i];
+            fileContent+='{\n';
+            fileContent+=`"key":"${temp.key}",\n"ca":"${temp.ca[0]}",\n"orderer":[\n`;
+            for(let j=0;j<temp.orderer.length;j++){
+                fileContent+=`"${temp.orderer[j]}"`;
                 if(j==temp.orderer.length-1){
-                    fileContent+='\n'
+                    fileContent+='\n';
                 }
                 else{
-                    fileContent+=',\n'
+                    fileContent+=',\n';
                 }
             }
-            fileContent+='],\n'
-
-            for(j=0;j<temp.leader_peers.length;i++){
-                fileContent+='"{temp.leader_peers[i]}"'
+            fileContent+='],\n';
+            fileContent+=`"leader_peers":[\n`;
+            for(let j=0;j<temp.leader_peers.length;j++){
+                fileContent+=`"${temp.leader_peers[j]}"`;
                 if(j==temp.leader_peers.length-1){
-                    fileContent+='\n'
+                    fileContent+='\n';
                 }
                 else{
-                    fileContent+=',\n'
+                    fileContent+=',\n';
                 }
             }
-            fileContent+='],\n'
-            for(j=0;j<temp.anchor_peers.length;i++){
-                fileContent+='"{temp.anchor_peers[i]}"'
+            fileContent+='],\n';
+            fileContent+=`"anchor_peers":[\n`;
+            for(let j=0;j<temp.anchor_peers.length;j++){
+                fileContent+=`"${temp.anchor_peers[j]}"`;
                 if(j==temp.anchor_peers.length-1){
-                    fileContent+='\n'
+                    fileContent+='\n';
                 }
                 else{
-                    fileContent+=',\n'
+                    fileContent+=',\n';
                 }
             }
-            fileContent+='],\n'
-            for(j=0;j<temp.committing_peers.length;i++){
-                fileContent+='"{temp.committing_peers[i]}"'
+            fileContent+='],\n';
+            fileContent+=`"committing_peers":[\n`;
+            for(let j=0;j<temp.committing_peers.length;j++){
+                fileContent+=`"${temp.committing_peers[j]}"`;
                 if(j==temp.committing_peers.length-1){
-                    fileContent+='\n'
+                    fileContent+='\n';
                 }
                 else{
-                    fileContent+=',\n'
+                    fileContent+=',\n';
                 }
             }
-            fileContent+='],\n'
-            for(j=0;j<temp.endorsing_peers.length;i++){
-                fileContent+='"{temp.endorsing_peers[i]}"'
+            fileContent+='],\n';
+            fileContent+=`"endorsing_peers":[\n`;
+            for(let j=0;j<temp.endorsing_peers.length;j++){
+                fileContent+=`"${temp.endorsing_peers[j]}"`;
                 if(j==temp.endorsing_peers.length-1){
-                    fileContent+='\n'
+                    fileContent+='\n';
                 }
                 else{
-                    fileContent+=',\n'
+                    fileContent+=',\n';
                 }
             }
             if(i<groups.length-1){
-            fileContent+=']\n},\n'
+            fileContent+=']\n},\n';
             }
             else{
-            fileContent+=']\n}\n],\n'
+            fileContent+=']\n}\n],\n';
             }          
         }
 
-        
+        fileContent+='"nodes":[\n';
+        for(let i=0;i<nodes.length;i++){
+            temp=nodes[i];
+            fileContent+=`{\n"key":"${temp.key}",\n"org":"${temp.org}",\n"adderss":{\n"host":"${temp.host}",\n"ssh_port":"${temp.ssh_port}",\n"fabric_port":"${temp.fabric_port}"\n},\n"bootstrap":[`;
+
+            fileContent+=`"${temp.bootstrap}"],\n"type":[\n`;
+            for(let j=0;j<temp.type.length;j++){
+                fileContent+=`"${temp.type[j]}"`;
+                if(j==temp.type.length-1){
+                    fileContent+='\n';
+                }
+                else{
+                    fileContent+=',\n';
+                }
+            }
+            if(i==nodes.length-1){
+            fileContent+=']\n}\n';
+            }
+            else{
+                fileContent+=']\n},\n'
+            }
+        }
+
+        fileContent+=`],\n"blockchains":[\n{\n"key":"${allkey}",\n"name":"${allname}",\n"channels":[\n"${allchannel}"\n]\n}\n]\n}`;
 
 
-
-
-
-
-
-
-
-
-
-    
+ 
         // 创建 Blob 对象
         let blob = new Blob([fileContent], { type: "text/plain;charset=utf-8" });
     
